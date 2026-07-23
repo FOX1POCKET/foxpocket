@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>FoxPocket</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg-0:#080B14;
+  --bg-1:#0F1524;
+  --bg-2:#161E33;
+  --bg-3:#1E2A47;
+  --border:#28324E;
+  --text-0:#EEF1FA;
+  --text-1:#9AA4C4;
+  --text-2:#5F6A8C;
+  --fox-1:#FF3B1F;
+  --fox-2:#FF7A00;
+  --fox-3:#FFB300;
+  --fox-grad: linear-gradient(135deg, var(--fox-1) 0%, var(--fox-2) 55%, var(--fox-3) 100%);
+  --up:#1FBF6C;
+  --up-deep:#128A4D;
+  --down:#F13A4F;
+  --down-deep:#B01F30;
+  --teal:#1EE3A8;
+  --radius-l:20px;
+  --radius-m:14px;
+  --radius-s:9px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  background:var(--bg-0);
+  color:var(--text-0);
+  font-family:'Inter',sans-serif;
+  overscroll-behavior:none;
+  display:flex;
+  justify-content:center;
+}
+.app{
+  width:100%;
+  max-width:460px;
+  min-height:100vh;
+  background:var(--bg-0);
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+.display{font-family:'Sora',sans-serif;}
+
+/* ---------- scrollbars ---------- */
+::-webkit-scrollbar{width:0px;height:0px;}
+
+/* ================= TOP BAR ================= */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 14px 10px 14px;
+  gap:10px;
+  position:relative;
+  z-index:20;
+}
+.brand{
+  display:flex; align-items:center; gap:8px;
+}
+.brand-mark{
+  width:30px;height:30px;
+  position:relative;
+}
+.brand-mark svg{width:100%;height:100%;display:block;}
+.brand-word{
+  font-family:'Sora',sans-serif;
+  font-weight:800;
+  font-size:16.5px;
+  letter-spacing:0.2px;
+}
+.brand-word .fx{
+  background:var(--fox-grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.top-right{display:flex; align-items:center; gap:8px;}
+
+.acct-pill{
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:6px 6px 6px 12px;
+  cursor:pointer;
+  user-select:none;
+  transition:border-color .15s ease, background .15s ease;
+}
+.acct-pill:active{background:var(--bg-3);}
+.acct-pill .lbl{font-size:10px; color:var(--text-2); line-height:1.1; text-align:right;}
+.acct-pill .bal{font-size:13.5px; font-weight:700; line-height:1.15;}
+.acct-pill .bal.demo{color:var(--teal);}
+.acct-pill .bal.real{color:var(--text-0);}
+.acct-pill .chev{color:var(--text-2); font-size:9px; margin-inline-start:1px;}
+
+.wallet-btn{
+  width:38px;height:38px;
+  border-radius:11px;
+  background:linear-gradient(160deg,var(--up) 0%, var(--up-deep) 100%);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  border:none;
+  box-shadow:0 4px 14px rgba(31,191,108,.28);
+  transition:transform .12s ease;
+}
+.wallet-btn:active{transform:scale(.9);}
+.wallet-btn svg{width:19px;height:19px;}
+
+.avatar-wrap{
+  position:relative;
+  width:38px;height:38px;
+  cursor:pointer;
+}
+.avatar-ring{
+  width:38px;height:38px;
+  border-radius:50%;
+  padding:2px;
+  background:var(--bg-3);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s ease;
+}
+.avatar-wrap.alert .avatar-ring{
+  background:var(--fox-grad);
+  animation:ringpulse 1.6s ease-in-out infinite;
+}
+@keyframes ringpulse{
+  0%,100%{filter:drop-shadow(0 0 0px rgba(255,122,0,.0));}
+  50%{filter:drop-shadow(0 0 6px rgba(255,122,0,.55));}
+}
+.avatar-img{
+  width:100%;height:100%;border-radius:50%;
+  background:var(--bg-3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-1);
+}
+.avatar-img svg{width:20px;height:20px;}
+.verify-badge{
+  position:absolute; bottom:-2px; right:-2px;
+  width:15px;height:15px;border-radius:50%;
+  background:var(--teal);
+  border:2px solid var(--bg-0);
+  display:flex;align-items:center;justify-content:center;
+}
+.verify-badge svg{width:8px;height:8px;}
+.alert-dot{
+  position:absolute; top:-2px; right:-2px;
+  width:11px;height:11px;border-radius:50%;
+  background:var(--fox-1);
+  border:2px solid var(--bg-0);
+  display:none;
+}
+.avatar-wrap.alert .alert-dot{display:block; animation:dotpop .3s ease;}
+@keyframes dotpop{from{transform:scale(0);}to{transform:scale(1);}}
+
+/* ================= MARKET SELECT BAR ================= */
+.market-bar{
+  margin:2px 14px 10px 14px;
+  display:flex; align-items:center; gap:8px;
+}
+.market-chip{
+  flex:1;
+  display:flex; align-items:center; gap:9px;
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-m);
+  padding:9px 12px;
+  cursor:pointer;
+}
+.market-chip .flags{display:flex; font-size:15px; letter-spacing:-4px;}
+.market-chip .pname{font-weight:700; font-size:14.5px;}
+.market-chip .potc{font-size:10.5px; color:var(--text-2); font-weight:600; margin-inline-start:2px;}
+.market-chip .payout{
+  margin-inline-start:auto;
+  color:var(--up); font-weight:700; font-size:13.5px;
+  font-family:'JetBrains Mono',monospace;
+}
+.market-chip .chev{color:var(--text-2); font-size:10px;}
+
+/* ================= CHART ================= */
+.chart-wrap{
+  margin:0 14px 10px 14px;
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-l);
+  overflow:hidden;
+  position:relative;
+}
+.chart-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px 0 12px;
+}
+.price-now{
+  font-family:'JetBrains Mono',monospace;
+  font-size:19px; font-weight:700;
+}
+.price-now.up{color:var(--up);}
+.price-now.down{color:var(--down);}
+.timeframe-tabs{display:flex; gap:4px;}
+.timeframe-tabs button{
+  background:transparent; border:none; color:var(--text-2);
+  font-size:11px; font-weight:600; padding:4px 7px; border-radius:7px;
+  cursor:pointer; font-family:'JetBrains Mono',monospace;
+}
+.timeframe-tabs button.active{background:var(--bg-3); color:var(--text-0);}
+canvas#chart{display:block; width:100%; height:400px; touch-action:none; cursor:grab;}
+canvas#chart:active{cursor:grabbing;}
+.live-return{
+  position:absolute; top:38px; left:12px; z-index:12;
+  background:var(--fox-grad); color:#fff; font-size:11px; font-weight:700;
+  padding:5px 11px; border-radius:999px; cursor:pointer;
+  box-shadow:0 4px 12px rgba(255,90,20,.35);
+}
+.real-tag{
+  display:inline-block; background:rgba(31,191,108,.15); color:var(--up); font-size:9.5px; font-weight:700;
+  padding:2px 6px; border-radius:6px; margin-inline-start:4px; vertical-align:middle;
+}
+
+.trade-flags{
+  position:absolute; left:0; top:0; width:100%; height:230px;
+  pointer-events:none;
+}
+
+/* ================= CONTROLS ================= */
+.controls{
+  margin:0 14px 10px 14px;
+  display:flex; gap:10px;
+}
+.ctrl-box{
+  flex:1;
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-m);
+  padding:9px 11px;
+}
+.ctrl-box .ctrl-lbl{font-size:10.5px; color:var(--text-2); font-weight:600; margin-bottom:3px;}
+.ctrl-box .ctrl-val-row{display:flex; align-items:center; justify-content:space-between;}
+.ctrl-box .ctrl-val{font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700;}
+.ctrl-amount-input{
+  background:transparent; border:none; outline:none; width:64px; padding:0;
+  -moz-appearance:textfield;
+}
+.ctrl-amount-input::-webkit-outer-spin-button, .ctrl-amount-input::-webkit-inner-spin-button{
+  -webkit-appearance:none; margin:0;
+}
+#timeBox{cursor:pointer;}
+#timeBox:active{background:var(--bg-3);}
+.stepper{display:flex; gap:5px;}
+.stepper button{
+  width:20px;height:20px;border-radius:6px;border:none;
+  background:var(--bg-3); color:var(--text-0); font-size:13px; font-weight:700;
+  cursor:pointer; display:flex;align-items:center;justify-content:center; line-height:0;
+}
+.stepper button:active{background:var(--fox-2); color:#111;}
+
+.presets{display:flex; gap:6px; overflow-x:auto; margin:0 14px 12px 14px; padding-bottom:2px;}
+.presets::-webkit-scrollbar{display:none;}
+.preset-chip{
+  flex:0 0 auto;
+  background:var(--bg-2); border:1px solid var(--border); color:var(--text-1);
+  font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:600;
+  padding:6px 11px; border-radius:999px; cursor:pointer; white-space:nowrap;
+}
+.preset-chip.active{background:var(--bg-3); color:var(--text-0); border-color:var(--fox-2);}
+
+/* ================= BUY / SELL ================= */
+.trade-btns{
+  display:flex; gap:10px;
+  margin:0 14px 16px 14px;
+}
+.tbtn{
+  position:relative;
+  flex:1;
+  border:none; cursor:pointer;
+  border-radius:var(--radius-m);
+  padding:13px 10px 11px 10px;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  overflow:hidden;
+  isolation:isolate;
+}
+.tbtn .row1{display:flex; align-items:center; gap:6px;}
+.tbtn .txt{font-family:'Sora',sans-serif; font-weight:800; font-size:15.5px; color:#fff;}
+.tbtn .pct{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; color:rgba(255,255,255,.85);}
+.tbtn.buy{background:linear-gradient(160deg,var(--up) 0%, var(--up-deep) 100%); box-shadow:0 6px 18px rgba(31,191,108,.25);}
+.tbtn.sell{background:linear-gradient(160deg,var(--down) 0%, var(--down-deep) 100%); box-shadow:0 6px 18px rgba(241,58,79,.25);}
+.tbtn .arrow{font-size:13px;}
+.tbtn:active{transform:scale(.97);}
+.tbtn .ripple{
+  position:absolute; border-radius:50%; background:rgba(255,255,255,.5);
+  transform:scale(0); opacity:1; pointer-events:none; z-index:5;
+  animation:rippleAnim .55s ease-out forwards;
+}
+@keyframes rippleAnim{ to{transform:scale(18); opacity:0;} }
+.tbtn .flash{
+  position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none;
+}
+.tbtn.firing .flash{animation:flashAnim .35s ease-out;}
+@keyframes flashAnim{ 0%{opacity:.55;} 100%{opacity:0;} }
+.tbtn.locked{opacity:.55; pointer-events:none;}
+
+/* ================= ACTIVE TRADE CHIPS (floating countdowns) ================= */
+.active-trades-strip{
+  margin:0 14px 12px 14px;
+  display:flex; flex-direction:column; gap:8px;
+  max-height:132px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+}
+.active-trades-strip::-webkit-scrollbar{width:4px;}
+.active-trades-strip::-webkit-scrollbar-thumb{background:var(--bg-3); border-radius:4px;}
+.live-chip{
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg-2); border:1px solid var(--border);
+  border-radius:var(--radius-m); padding:9px 12px;
+  animation:chipIn .25s ease;
+  flex:0 0 auto;
+}
+@keyframes chipIn{from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);}}
+.live-chip .dir{
+  width:26px;height:26px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px; color:#fff; flex:0 0 auto;
+}
+.live-chip .dir.buy{background:var(--up-deep);}
+.live-chip .dir.sell{background:var(--down-deep);}
+.live-chip .info{flex:1; min-width:0;}
+.live-chip .pair-n{font-size:12.5px; font-weight:700;}
+.live-chip .amt-n{font-size:11px; color:var(--text-2); font-family:'JetBrains Mono',monospace;}
+.live-chip .cd{
+  font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px;
+  color:var(--fox-3);
+  min-width:52px; text-align:right;
+}
+.live-chip .barwrap{height:3px; background:var(--bg-3); border-radius:2px; margin-top:6px; overflow:hidden;}
+.live-chip .bar{height:100%; background:var(--fox-grad); width:100%;}
+
+/* ================= BOTTOM NAV ================= */
+.bottomnav{
+  margin-top:auto;
+  display:flex;
+  border-top:1px solid var(--border);
+  background:var(--bg-1);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom)) 4px;
+  position:sticky; bottom:0;
+}
+.navitem{
+  flex:1;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 2px;
+  border-radius:12px;
+  cursor:pointer;
+  color:var(--text-2);
+  position:relative;
+}
+.navitem svg{width:20px;height:20px;}
+.navitem span{font-size:10px; font-weight:600;}
+.navitem.active{color:#fff; background:linear-gradient(160deg,#2A63FF,#1E46C4);}
+.navitem .badge{
+  position:absolute; top:2px; right:14px;
+  background:var(--fox-1); color:#fff; font-size:9px; font-weight:700;
+  border-radius:8px; padding:1px 5px; line-height:1.3;
+}
+
+/* ================= TRADES PAGE ================= */
+.page{ display:none; flex-direction:column; flex:1; min-height:0;}
+.page.active{display:flex;}
+.page-head{padding:16px 14px 8px 14px;}
+.page-head h1{font-family:'Sora'; font-size:21px; margin:0 0 12px 0;}
+.seg{
+  display:flex; background:var(--bg-2); border:1px solid var(--border);
+  border-radius:12px; padding:3px; gap:3px;
+}
+.seg button{
+  flex:1; background:transparent; border:none; color:var(--text-1);
+  font-weight:700; font-size:13.5px; padding:9px 0; border-radius:9px; cursor:pointer;
+  font-family:'Inter';
+}
+.seg button.active{background:var(--bg-3); color:#fff; box-shadow:0 0 0 1px var(--border) inset;}
+.trade-list{padding:6px 14px 20px 14px; overflow-y:auto; flex:1;}
+.trade-row{
+  display:flex; align-items:center; gap:10px;
+  padding:11px 4px; border-bottom:1px solid var(--border);
+}
+.trade-row .ic{
+  width:30px;height:30px;border-radius:9px; flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center; font-size:13px; color:#fff;
+}
+.trade-row .ic.win{background:var(--up-deep);}
+.trade-row .ic.lose{background:var(--down-deep);}
+.trade-row .ic.open{background:var(--bg-3); color:var(--fox-3);}
+.trade-row .mid{flex:1; min-width:0;}
+.trade-row .p1{font-size:13.5px; font-weight:700;}
+.trade-row .p2{font-size:11px; color:var(--text-2); margin-top:1px;}
+.trade-row .right{text-align:right;}
+.trade-row .amt{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-1);}
+.trade-row .pnl{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; margin-top:2px;}
+.trade-row .pnl.win{color:var(--up);}
+.trade-row .pnl.lose{color:var(--down);}
+.empty-state{
+  text-align:center; color:var(--text-2); padding:60px 20px; font-size:13.5px;
+}
+
+/* ================= SIDE ACCOUNT PANEL ================= */
+.overlay{
+  position:absolute; inset:0; background:rgba(3,5,10,.6);
+  opacity:0; pointer-events:none; transition:opacity .22s ease; z-index:40;
+  backdrop-filter:blur(2px);
+}
+.overlay.show{opacity:1; pointer-events:auto;}
+.sidepanel{
+  position:absolute; top:0; right:0; height:100%; width:84%; max-width:340px;
+  background:var(--bg-1); border-left:1px solid var(--border);
+  transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  z-index:41; display:flex; flex-direction:column;
+  padding:18px 16px;
+  overflow-y:auto;
+}
+.sidepanel.show{transform:translateX(0);}
+.sp-close{
+  position:absolute; top:14px; right:14px; width:30px; height:30px; border-radius:50%;
+  background:var(--bg-2); border:1px solid var(--border); color:var(--text-1);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.sp-profile{display:flex; flex-direction:column; align-items:flex-start; gap:10px; margin:26px 0 16px 0;}
+.sp-avatar{position:relative; width:64px;height:64px;}
+.sp-avatar .ring{width:100%;height:100%; border-radius:50%; padding:2.5px; background:var(--teal); display:flex;align-items:center;justify-content:center;}
+.sp-avatar .img{width:100%;height:100%;border-radius:50%; background:var(--bg-3); display:flex;align-items:center;justify-content:center; color:var(--text-1);}
+.sp-avatar .img svg{width:30px;height:30px;}
+.sp-avatar .badge{position:absolute; bottom:0; right:0; width:20px;height:20px;border-radius:50%; background:var(--teal); border:2.5px solid var(--bg-1); display:flex;align-items:center;justify-content:center;}
+.sp-avatar .badge svg{width:10px;height:10px;}
+.sp-name{font-family:'Sora'; font-weight:700; font-size:17px;}
+.sp-meta{display:flex; flex-direction:column; gap:6px; width:100%;}
+.sp-meta .row{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-1);}
+.sp-meta .row svg{width:14px;height:14px; color:var(--text-2); flex:0 0 auto;}
+.sp-status-chip{
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(30,227,168,.12); color:var(--teal); border:1px solid rgba(30,227,168,.3);
+  font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; margin-top:2px;
+}
+.sp-deposit{
+  margin:6px 0 16px 0; width:100%;
+  background:transparent; border:1.5px solid var(--up); color:var(--up);
+  font-weight:700; font-size:14px; padding:11px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;
+}
+.sp-menu{display:flex; flex-direction:column; margin-top:6px;}
+.sp-menu .item{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 4px; color:var(--text-0); font-size:14px; font-weight:500;
+  border-bottom:1px solid var(--border); cursor:pointer;
+}
+.sp-menu .item svg{width:18px;height:18px; color:var(--text-2);}
+.sp-menu .item span.tag{
+  margin-inline-start:auto; background:var(--fox-1); color:#fff; font-size:10px; font-weight:700;
+  padding:2px 6px; border-radius:7px;
+}
+.sp-menu .item.danger{color:var(--down);}
+.sp-menu .item.danger svg{color:var(--down);}
+
+/* ================= MARKET MODAL ================= */
+.sheet{
+  position:absolute; left:0; right:0; bottom:0; top:8%;
+  background:var(--bg-1); border-radius:22px 22px 0 0; border:1px solid var(--border);
+  transform:translateY(100%); transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  z-index:41; display:flex; flex-direction:column; overflow:hidden;
+}
+.sheet.show{transform:translateY(0);}
+.sheet-head{padding:14px 16px 10px 16px; display:flex; align-items:center; justify-content:space-between;}
+.sheet-head h2{font-family:'Sora'; font-size:17px; margin:0;}
+.sheet-close{width:28px;height:28px;border-radius:50%; background:var(--bg-2); border:1px solid var(--border); color:var(--text-1); display:flex;align-items:center;justify-content:center; cursor:pointer;}
+.search-row{padding:0 16px 10px 16px;}
+.search-row input{
+  width:100%; background:var(--bg-2); border:1px solid var(--border); border-radius:11px;
+  padding:10px 12px; color:var(--text-0); font-size:13.5px; font-family:'Inter';
+}
+.search-row input::placeholder{color:var(--text-2);}
+.market-list{overflow-y:auto; flex:1; padding:0 10px 20px 10px;}
+.market-row{
+  display:flex; align-items:center; gap:10px; padding:11px 8px; border-radius:12px; cursor:pointer;
+}
+.market-row:active{background:var(--bg-2);}
+.market-row .flags{font-size:16px; letter-spacing:-4px; width:38px;}
+.market-row .nm{flex:1; font-weight:700; font-size:13.5px;}
+.market-row .nm .otc{color:var(--text-2); font-weight:600; font-size:10.5px; margin-inline-start:4px;}
+.market-row .pay{font-family:'JetBrains Mono',monospace; color:var(--up); font-weight:700; font-size:13px;}
+.market-row.selected{background:var(--bg-2); box-shadow:0 0 0 1px var(--fox-2) inset;}
+
+/* ================= DEPOSIT MODAL ================= */
+.modal-back{position:absolute; inset:0; background:rgba(3,5,10,.65); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:50; display:flex; align-items:center; justify-content:center;}
+.modal-back.show{opacity:1; pointer-events:auto;}
+.modal-card{
+  width:88%; max-width:340px; background:var(--bg-1); border:1px solid var(--border); border-radius:20px;
+  padding:20px; transform:scale(.92); transition:transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.modal-back.show .modal-card{transform:scale(1);}
+.modal-card h3{font-family:'Sora'; font-size:17px; margin:0 0 6px 0;}
+.modal-card p{font-size:12.5px; color:var(--text-1); margin:0 0 16px 0; line-height:1.5;}
+.field{margin-bottom:14px;}
+.field label{font-size:11.5px; color:var(--text-2); font-weight:600; display:block; margin-bottom:5px;}
+.field .box{
+  background:var(--bg-2); border:1px solid var(--border); border-radius:12px; padding:11px 13px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.field input{background:transparent; border:none; color:var(--text-0); font-family:'JetBrains Mono',monospace; font-size:15px; width:100%; outline:none;}
+.amt-quick{display:flex; gap:6px; margin-top:8px;}
+.amt-quick button{
+  flex:1; background:var(--bg-2); border:1px solid var(--border); color:var(--text-1);
+  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:7px 0; border-radius:9px; cursor:pointer;
+}
+.modal-cta{
+  width:100%; border:none; background:linear-gradient(160deg,var(--up),var(--up-deep)); color:#fff;
+  font-weight:700; font-size:14.5px; padding:13px; border-radius:13px; cursor:pointer; margin-top:4px;
+}
+
+/* ================= AUTH SCREEN ================= */
+.auth{
+  position:absolute; inset:0; background:var(--bg-0); z-index:60;
+  display:flex; flex-direction:column; padding:40px 24px 24px 24px;
+  transition:opacity .35s ease, transform .35s ease;
+}
+.auth.hide{opacity:0; transform:scale(1.03); pointer-events:none;}
+.auth-logo{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:34px;}
+.auth-logo .mark{width:58px;height:58px;}
+.auth-logo .word{font-family:'Sora'; font-weight:800; font-size:22px;}
+.auth h1{font-family:'Sora'; font-size:20px; text-align:center; margin:0 0 6px 0;}
+.auth p.sub{text-align:center; color:var(--text-1); font-size:13px; margin:0 0 26px 0;}
+.auth .field .box{background:var(--bg-2);}
+.auth .field input{font-family:'Inter'; font-size:14px;}
+.auth-cta{
+  width:100%; border:none; background:var(--fox-grad); color:#fff; font-family:'Sora'; font-weight:700;
+  font-size:15px; padding:14px; border-radius:14px; cursor:pointer; margin-top:8px;
+  box-shadow:0 8px 22px rgba(255,90,20,.28);
+}
+.auth-skip{text-align:center; color:var(--text-2); font-size:12.5px; margin-top:16px; cursor:pointer; text-decoration:underline;}
+.auth-success{
+  position:absolute; inset:0; background:var(--bg-0); z-index:61; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:16px; opacity:0; pointer-events:none; transition:opacity .3s ease;
+}
+.auth-success.show{opacity:1; pointer-events:auto;}
+.success-ring{
+  width:84px;height:84px;border-radius:50%; background:rgba(30,227,168,.12);
+  display:flex;align-items:center;justify-content:center;
+  animation:successPop .5s cubic-bezier(.2,1.4,.4,1);
+}
+.success-ring .core{width:60px;height:60px;border-radius:50%; background:var(--teal); display:flex;align-items:center;justify-content:center;}
+.success-ring svg{width:28px;height:28px; color:#04140D;}
+@keyframes successPop{0%{transform:scale(0);} 70%{transform:scale(1.12);} 100%{transform:scale(1);}}
+.auth-success h2{font-family:'Sora'; font-size:19px; margin:0;}
+.auth-success p{color:var(--text-1); font-size:13px; margin:0; text-align:center; max-width:260px;}
+.verify-line{display:flex; align-items:center; gap:6px; color:var(--teal); font-size:13px; font-weight:700; margin-top:2px;}
+.verify-line svg{width:15px;height:15px;}
+
+/* ================= TOASTS ================= */
+.toast-stack{position:absolute; top:10px; left:0; right:0; display:flex; flex-direction:column; align-items:center; gap:8px; z-index:70; pointer-events:none;}
+.toast{
+  background:var(--bg-3); border:1px solid var(--border); color:var(--text-0);
+  font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:11px;
+  box-shadow:0 8px 20px rgba(0,0,0,.35);
+  display:flex; align-items:center; gap:8px;
+  animation:toastIn .25s ease, toastOut .25s ease 2.6s forwards;
+  max-width:88%;
+}
+.toast.win{border-color:rgba(31,191,108,.4);}
+.toast.lose{border-color:rgba(241,58,79,.4);}
+.toast .dot{width:8px;height:8px;border-radius:50%; flex:0 0 auto;}
+.toast.win .dot{background:var(--up);}
+.toast.lose .dot{background:var(--down);}
+.toast.info .dot{background:var(--fox-2);}
+@keyframes toastIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+@keyframes toastOut{to{opacity:0; transform:translateY(-10px);}}
+
+/* missed-trade banner (story style) */
+.missed-banner{
+  margin:0 14px 10px 14px;
+  display:none;
+  align-items:center; gap:10px;
+  background:linear-gradient(90deg, rgba(255,59,31,.14), rgba(255,179,0,.10));
+  border:1px solid rgba(255,122,0,.35);
+  border-radius:var(--radius-m);
+  padding:10px 12px;
+  cursor:pointer;
+  animation:bannerIn .3s ease;
+}
+@keyframes bannerIn{from{opacity:0; transform:translateY(-6px);} to{opacity:1;transform:translateY(0);}}
+.missed-banner .ic{width:30px;height:30px;border-radius:50%; background:var(--fox-grad); display:flex;align-items:center;justify-content:center; flex:0 0 auto;}
+.missed-banner .ic svg{width:15px;height:15px; color:#fff;}
+.missed-banner .txt{flex:1; font-size:12.5px; font-weight:600; line-height:1.35;}
+.missed-banner .txt b{color:var(--fox-3);}
+.missed-banner .go{color:var(--text-2); font-size:11px;}
+
+.hidden{display:none !important;}
+
+/* ================= SPLASH SCREEN ================= */
+.splash{
+  position:absolute; inset:0; z-index:99; background:var(--bg-0);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  transition:opacity .4s ease;
+}
+.splash.hide{opacity:0; pointer-events:none;}
+.splash-mark{width:76px;height:76px; opacity:0; transform:scale(.6);
+  animation:splashIn .7s cubic-bezier(.2,1.3,.35,1) .15s forwards;}
+.splash-word{font-family:'Sora'; font-weight:800; font-size:19px; letter-spacing:.3px;
+  opacity:0; animation:splashWord .5s ease .55s forwards;}
+.splash-word .fx2{background:var(--fox-grad); -webkit-background-clip:text; background-clip:text; color:transparent;}
+@keyframes splashIn{0%{opacity:0; transform:scale(.5) rotate(-8deg);} 70%{opacity:1; transform:scale(1.08) rotate(2deg);} 100%{opacity:1; transform:scale(1) rotate(0);}}
+@keyframes splashWord{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+.splash-ring{width:30px;height:30px;border-radius:50%; border:2.5px solid var(--bg-3); border-top-color:var(--fox-2);
+  animation:splashSpin .8s linear infinite, splashFade .4s ease .9s forwards; opacity:0;}
+@keyframes splashSpin{to{transform:rotate(360deg);}}
+@keyframes splashFade{to{opacity:1;}}
+
+/* mountain silhouette behind chart */
+.chart-wrap{
+  background-color:var(--bg-2);
+  background-image:
+    linear-gradient(180deg, rgba(15,20,36,.92) 0%, rgba(15,20,36,.72) 40%, rgba(15,20,36,.94) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpolygon points='0,200 60,80 120,150 170,60 230,140 290,50 340,130 400,90 400,200' fill='%231C2A44'/%3E%3Cpolygon points='60,80 75,100 45,100' fill='%23324364'/%3E%3Cpolygon points='170,60 188,84 152,84' fill='%23324364'/%3E%3Cpolygon points='290,50 306,72 274,72' fill='%23324364'/%3E%3C/svg%3E");
+  background-size:cover, cover;
+  background-position:center, bottom;
+  background-repeat:no-repeat, no-repeat;
+}
+
+/* ================= FULLSCREEN CHART MODE ================= */
+.fs-btn{
+  width:26px;height:26px;border-radius:8px;background:var(--bg-3); border:1px solid var(--border);
+  color:var(--text-1); display:flex;align-items:center;justify-content:center; cursor:pointer;
+}
+.fs-btn svg{width:13px;height:13px;}
+.app.chart-fullscreen .topbar,
+.app.chart-fullscreen .missed-banner,
+.app.chart-fullscreen .presets,
+.app.chart-fullscreen .bottomnav,
+.app.chart-fullscreen .market-bar{display:none !important;}
+.app.chart-fullscreen .chart-wrap{margin:0; border-radius:0; border:none;}
+.app.chart-fullscreen canvas#chart{height:calc(100vh - 180px);}
+.app.chart-fullscreen .pageTrading{padding-top:0;}
+.fs-exit{
+  position:absolute; top:10px; right:10px; z-index:15; width:30px;height:30px;border-radius:50%;
+  background:rgba(8,11,20,.7); border:1px solid var(--border); color:#fff; display:none;
+  align-items:center; justify-content:center; cursor:pointer;
+}
+.app.chart-fullscreen .fs-exit{display:flex;}
+
+/* ================= AUTH MODE TOGGLE ================= */
+.auth-toggle{
+  display:flex; justify-content:center; gap:6px; font-size:12.5px; color:var(--text-1); margin-top:14px;
+}
+.auth-toggle b{color:var(--fox-3); cursor:pointer; font-weight:700;}
+
+/* ================= WALLET DEPOSIT / WITHDRAW ================= */
+.wallet-box{
+  background:var(--bg-2); border:1px dashed var(--border); border-radius:12px; padding:12px;
+  display:flex; align-items:center; gap:10px; margin-bottom:14px;
+}
+.wallet-box .addr{flex:1; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text-0); word-break:break-all;}
+.wallet-box button{
+  flex:0 0 auto; background:var(--bg-3); border:1px solid var(--border); color:var(--text-0);
+  font-size:11px; font-weight:700; padding:7px 10px; border-radius:9px; cursor:pointer;
+}
+.net-tag{display:inline-block; background:rgba(255,122,0,.12); color:var(--fox-3); font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ SPLASH ============ -->
+  <div class="splash" id="splash">
+    <div class="splash-mark" id="splashMark"></div>
+    <div class="splash-word"><span style="color:#fff">Fox</span><span class="fx2">Pocket</span></div>
+    <div class="splash-ring"></div>
+  </div>
+
+  <!-- ============ AUTH SCREEN ============ -->
+  <div class="auth" id="authScreen">
+    <div class="auth-logo">
+      <div class="mark" id="authMark"></div>
+      <div class="word"><span style="color:#fff">Fox</span><span style="background:var(--fox-grad);-webkit-background-clip:text;background-clip:text;color:transparent;">Pocket</span></div>
+    </div>
+    <h1 id="authTitle">Create your account</h1>
+    <p class="sub" id="authSub">Trade global markets in seconds. Start free.</p>
+
+    <div class="field">
+      <label>Full name</label>
+      <div class="box"><input id="fName" type="text" placeholder="Full name" /></div>
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <div class="box"><input id="fEmail" type="email" placeholder="you@example.com" /></div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="box"><input id="fPass" type="password" placeholder="••••••••" /></div>
+    </div>
+
+    <button class="auth-cta" id="authSubmit">Create account</button>
+    <div class="auth-toggle" id="authToggleRow">Already have an account? <b id="authToggleBtn">Log in</b></div>
+    <div class="auth-skip" id="authSkip">Skip and preview the app</div>
+  </div>
+
+  <div class="auth-success" id="authSuccess">
+    <div class="success-ring"><div class="core">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#04140D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div></div>
+    <h2>Account created</h2>
+    <div class="verify-line">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="#04140D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Identity verified
+    </div>
+    <p>Welcome to FoxPocket — your account is ready to trade.</p>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark" id="topMark"></div>
+      <div class="brand-word"><span>Fox</span><span class="fx">Pocket</span></div>
+    </div>
+    <div class="top-right">
+      <div class="acct-pill" id="acctPill">
+        <div>
+          <div class="lbl" id="acctLbl">QT REAL</div>
+          <div class="bal demo mono" id="acctBal">$10,000.00</div>
+        </div>
+        <span class="chev">▾</span>
+      </div>
+      <button class="wallet-btn" id="refreshBalBtn" title="Refresh balance" style="background:linear-gradient(160deg,#2A63FF,#1E46C4); box-shadow:0 4px 14px rgba(42,99,255,.28);">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 4v5h5M20 20v-5h-5M4.5 15a8 8 0 0014.5 3.5M19.5 9A8 8 0 005 5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="wallet-btn" id="walletBtn" title="Deposit">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 012-2h13a1 1 0 011 1v2M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a1 1 0 00-1-1H5a2 2 0 01-2-2z" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="13" r="1.4" fill="#fff"/></svg>
+      </button>
+      <div class="avatar-wrap" id="avatarWrap">
+        <div class="avatar-ring"><div class="avatar-img" id="avatarInner">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div></div>
+        <div class="verify-badge" id="avatarVerify" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#04140D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="alert-dot" id="avatarAlertDot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TRADING PAGE ============ -->
+  <div class="page active" id="pageTrading">
+
+    <div class="missed-banner" id="missedBanner">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/></svg></div>
+      <div class="txt">You missed a trade result — <b id="missedText">check what happened</b></div>
+      <div class="go">View ›</div>
+    </div>
+
+    <div class="market-bar">
+      <div class="market-chip" id="marketChip">
+        <div class="flags" id="chipFlags">🇪🇺🇺🇸</div>
+        <div class="pname" id="chipName">EUR/USD</div>
+        <div class="potc">OTC</div>
+        <div class="payout" id="chipPayout">+92%</div>
+        <div class="chev">▾</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <div class="price-now mono up" id="priceNow">1.08432</div>
+        <div class="timeframe-tabs">
+          <button data-tf="S5" >5s</button>
+          <button data-tf="M1" class="active">M1</button>
+          <button data-tf="M5">M5</button>
+          <button data-tf="M15">M15</button>
+          <button class="fs-btn" id="fsToggle" title="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <canvas id="chart" width="800" height="460"></canvas>
+      <div class="trade-flags" id="tradeFlags"></div>
+      <div class="live-return hidden" id="liveReturn">↻ Live</div>
+      <div class="fs-exit" id="fsExit">✕</div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-box" id="timeBox" title="Tap to type a custom duration">
+        <div class="ctrl-lbl">TIME <span style="opacity:.6;">(tap to edit)</span></div>
+        <div class="ctrl-val-row">
+          <div class="ctrl-val mono" id="timeVal">00:01:00</div>
+        </div>
+      </div>
+      <div class="ctrl-box">
+        <div class="ctrl-lbl">AMOUNT <span style="opacity:.6;">(tap to edit)</span></div>
+        <div class="ctrl-val-row">
+          <span class="mono" style="font-weight:700; font-size:16px;">$</span>
+          <input id="amtInput" type="number" min="1" max="10000" step="1" value="1" class="ctrl-val mono ctrl-amount-input" inputmode="numeric" />
+          <div class="stepper">
+            <button id="amtDown">−</button>
+            <button id="amtUp">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="timeInputRow" class="hidden" style="margin:-4px 14px 12px 14px; display:flex; gap:8px;">
+      <input id="timeInputVisible" type="number" min="3" max="14400" step="1" placeholder="Seconds (3 – 14400)" style="flex:1; background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:9px 12px; color:var(--text-0); font-family:'JetBrains Mono',monospace;" />
+      <button id="timeInputConfirm" style="background:var(--fox-grad); border:none; color:#fff; font-weight:700; padding:0 16px; border-radius:10px;">Set</button>
+    </div>
+
+    <div class="presets" id="timePresets">
+      <div class="preset-chip" data-sec="3">3s</div>
+      <div class="preset-chip" data-sec="15">15s</div>
+      <div class="preset-chip" data-sec="30">30s</div>
+      <div class="preset-chip active" data-sec="60">1m</div>
+      <div class="preset-chip" data-sec="300">5m</div>
+      <div class="preset-chip" data-sec="900">15m</div>
+      <div class="preset-chip" data-sec="3600">1h</div>
+      <div class="preset-chip" data-sec="14400">4h</div>
+    </div>
+
+    <div class="active-trades-strip" id="liveStrip"></div>
+
+    <div class="trade-btns">
+      <button class="tbtn sell" id="btnSell">
+        <div class="flash"></div>
+        <div class="row1"><span class="arrow">↘</span><span class="txt">SELL</span></div>
+        <span class="pct mono" id="sellPct">92%</span>
+      </button>
+      <button class="tbtn buy" id="btnBuy">
+        <div class="flash"></div>
+        <div class="row1"><span class="arrow">↗</span><span class="txt">BUY</span></div>
+        <span class="pct mono" id="buyPct">92%</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ TRADES PAGE ============ -->
+  <div class="page" id="pageTrades">
+    <div class="page-head">
+      <h1>Trades</h1>
+      <div class="seg">
+        <button class="active" id="segOpened">Opened</button>
+        <button id="segClosed">Closed</button>
+      </div>
+    </div>
+    <div class="trade-list" id="tradeListOpened"></div>
+    <div class="trade-list hidden" id="tradeListClosed"></div>
+  </div>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <div class="bottomnav">
+    <div class="navitem active" data-nav="trading">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7m6 7V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Trading</span>
+    </div>
+    <div class="navitem" data-nav="trades">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M7 17l4-5 3 3 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Trades</span>
+      <span class="badge hidden" id="tradesBadge">1</span>
+    </div>
+    <div class="navitem" data-nav="insights">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Insights</span>
+    </div>
+    <div class="navitem" data-nav="social">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="9" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M10 20c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Social</span>
+    </div>
+    <div class="navitem" data-nav="more">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>
+      <span>More</span>
+    </div>
+  </div>
+
+  <!-- ============ SIDE ACCOUNT PANEL ============ -->
+  <div class="overlay" id="overlay"></div>
+  <div class="sidepanel" id="sidePanel">
+    <div class="sp-close" id="spClose">✕</div>
+    <div class="sp-profile">
+      <div class="sp-avatar">
+        <div class="ring"><div class="img">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div></div>
+        <div class="badge" id="spVerifyBadge" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#04140D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div>
+        <div class="sp-name" id="spName">Guest Trader</div>
+        <div class="sp-status-chip" id="spStatusChip">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Verified account
+        </div>
+      </div>
+      <div class="sp-meta">
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span id="spEmail">guest@foxpocket.app</span>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="4" stroke="currentColor" stroke-width="1.6"/><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9z" stroke="currentColor" stroke-width="1.6"/></svg>
+          ID <span id="spId">10234871</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin:6px 0 16px 0;">
+      <button class="sp-deposit" id="spDeposit" style="margin:0; flex:1;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 4v16m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Deposit
+      </button>
+      <button class="sp-deposit" id="spWithdraw" style="margin:0; flex:1; border-color:var(--down); color:var(--down);">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 20V4m0 0l-5 5m5-5l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Withdraw
+      </button>
+    </div>
+
+    <div class="sp-menu">
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7m6 7V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Trading</div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="1.7"/></svg>Finance</div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Profile</div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v5H4zM4 15h10v5H4zM17 15h3v5h-3z" stroke="currentColor" stroke-width="1.6"/></svg>Market</div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 13L6 21l6-3 6 3-2.5-8" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Achievements</div>
+      <div class="item" id="spChat"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.55L3 20l1.06-4.72A8.5 8.5 0 1121 11.5z" stroke="currentColor" stroke-width="1.7"/></svg>Chat<span class="tag">10</span></div>
+      <div class="item" id="spHelp"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M9.5 9a2.5 2.5 0 115 .5c0 1.5-2.5 1.8-2.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>Help</div>
+      <div class="item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19 12a7 7 0 00-.14-1.4l2-1.55-2-3.46-2.36.95a7 7 0 00-2.4-1.4L13.7 3h-3.4l-.4 2.14a7 7 0 00-2.4 1.4l-2.36-.95-2 3.46 2 1.55A7 7 0 005 12c0 .48.05.94.14 1.4l-2 1.55 2 3.46 2.36-.95c.7.62 1.52 1.1 2.4 1.4l.4 2.14h3.4l.4-2.14a7 7 0 002.4-1.4l2.36.95 2-3.46-2-1.55c.09-.46.14-.92.14-1.4z" stroke="currentColor" stroke-width="1.3"/></svg>Settings</div>
+      <div class="item danger" id="spLogout"><svg viewBox="0 0 24 24" fill="none"><path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 01-2-2V7a2 2 0 012-2h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Log out</div>
+    </div>
+  </div>
+
+  <!-- ============ MARKET SHEET ============ -->
+  <div class="overlay" id="overlay2"></div>
+  <div class="sheet" id="marketSheet">
+    <div class="sheet-head"><h2>Select market</h2><div class="sheet-close" id="sheetClose">✕</div></div>
+    <div class="seg" style="margin:0 16px 10px 16px;">
+      <button class="active" id="segOTC">OTC (synthetic)</button>
+      <button id="segReal">Real market</button>
+    </div>
+    <div class="search-row"><input type="text" id="marketSearch" placeholder="Search currency pair..." /></div>
+    <div class="market-list" id="marketList"></div>
+  </div>
+
+  <!-- ============ DEPOSIT MODAL ============ -->
+  <div class="modal-back" id="depModalBack">
+    <div class="modal-card" style="position:relative;">
+      <div class="sheet-close" id="depClose" style="position:absolute; top:14px; right:14px;">✕</div>
+      <h3>Deposit funds</h3>
+      <p>Send USDT to the address below, then confirm — our team will review and credit your account.</p>
+      <div class="net-tag">USDT · TRC20 network</div>
+      <div class="wallet-box">
+        <div class="addr" id="companyWalletAddr">TXXXX0000COMPANYWALLETADDRESSXXXX</div>
+        <button id="copyWalletBtn">Copy</button>
+      </div>
+      <div class="field">
+        <label>Amount sent (USD)</label>
+        <div class="box"><input id="depAmount" type="number" value="50" /></div>
+        <div class="amt-quick">
+          <button data-v="20">$20</button>
+          <button data-v="50">$50</button>
+          <button data-v="100">$100</button>
+          <button data-v="500">$500</button>
+        </div>
+      </div>
+      <button class="modal-cta" id="depConfirm">I've sent the payment</button>
+    </div>
+  </div>
+
+  <!-- ============ WITHDRAW MODAL ============ -->
+  <div class="modal-back" id="wdModalBack">
+    <div class="modal-card" style="position:relative;">
+      <div class="sheet-close" id="wdClose" style="position:absolute; top:14px; right:14px;">✕</div>
+      <h3>Withdraw funds</h3>
+      <p>Enter your USDT (TRC20) wallet address — our team will process it and confirm.</p>
+      <div class="field">
+        <label>Your wallet address</label>
+        <div class="box"><input id="wdAddress" type="text" placeholder="T..." /></div>
+      </div>
+      <div class="field">
+        <label>Amount (USD)</label>
+        <div class="box"><input id="wdAmount" type="number" value="20" /></div>
+      </div>
+      <button class="modal-cta" id="wdConfirm" style="background:linear-gradient(160deg,var(--down),var(--down-deep));">Request withdrawal</button>
+    </div>
+  </div>
+
+  <!-- ============ SUPPORT MODAL ============ -->
+  <div class="modal-back" id="supModalBack">
+    <div class="modal-card" style="position:relative;">
+      <div class="sheet-close" id="supClose" style="position:absolute; top:14px; right:14px;">✕</div>
+      <h3>Contact support</h3>
+      <p>Send a message to our team — we'll get back to you as soon as possible.</p>
+      <div class="field">
+        <label>Your message</label>
+        <div class="box" style="align-items:flex-start;"><textarea id="supMsg" rows="4" placeholder="How can we help?" style="background:transparent; border:none; color:var(--text-0); font-family:'Inter'; font-size:13.5px; width:100%; outline:none; resize:none;"></textarea></div>
+      </div>
+      <button class="modal-cta" id="supSend">Send message</button>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+</div>
+
+<script>
+/* ============================================================
+   FOXPOCKET — single page trading UI (front-end demo only)
+   No backend / no real money. All data is generated in-memory.
+   ============================================================ */
+
+/* ---------- Fox logo (inline SVG, matches uploaded mark) ---------- */
+const FOX_SVG = `
+<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="foxg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF3B1F"/>
+      <stop offset="55%" stop-color="#FF7A00"/>
+      <stop offset="100%" stop-color="#FFB300"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#foxg)" d="M100 12c10 0 16 14 20 26 4-12 10-26 20-26 3 0 4 3 2 6-6 10-12 22-13 32 22 8 36 28 36 55 0 38-30 70-65 70s-65-32-65-70c0-27 14-47 36-55-1-10-7-22-13-32-2-3-1-6 2-6z"/>
+  <path fill="#0B0F1A" d="M85 78c4 0 7 3 7 7s-3 7-7 7-7-3-7-7 3-7 7-7z"/>
+</svg>`;
+document.getElementById('authMark').innerHTML = FOX_SVG;
+document.getElementById('topMark').innerHTML = FOX_SVG;
+document.getElementById('splashMark').innerHTML = FOX_SVG;
+
+/* ---------- Coin icon badges (brand-toned monogram circles — no emoji) ---------- */
+function coinIcon(letter, bg, fg = '#fff') {
+  return `<svg viewBox="0 0 32 32" width="22" height="22"><circle cx="16" cy="16" r="16" fill="${bg}"/><text x="16" y="21" text-anchor="middle" font-family="Sora, sans-serif" font-weight="800" font-size="15" fill="${fg}">${letter}</text></svg>`;
+}
+
+
+/* ---------- Splash screen ---------- */
+setTimeout(() => { $('#splash').classList.add('hide'); }, 1900);
+
+/* ---------- Try to silently restore a saved session (no-ops safely if storage is unavailable) ---------- */
+(async function bootstrapSession() {
+  const saved = loadSession();
+  if (!saved || !saved.uid) return;
+  try {
+    const fresh = await refreshIdToken(saved.refreshToken);
+    currentUid = fresh.user_id;
+    currentIdToken = fresh.id_token;
+    currentRefreshToken = fresh.refresh_token;
+    const profile = await fsGetDoc(`users/${currentUid}`, currentIdToken);
+    userName = (profile && profile.name) || saved.name || 'Trader';
+    userEmail = (profile && profile.email) || saved.email || '';
+    realBalance = (profile && profile.realBalance) ?? realBalance;
+
+    // restore trade history so it survives leaving and coming back
+    const tradeDocs = await fsListCollection(`users/${currentUid}/trades`, currentIdToken);
+    const restoredOpen = [], restoredClosed = [];
+    tradeDocs.forEach(d => {
+      if (d.status === 'open') {
+        const elapsed = (Date.now() - d.placedAt) / 1000;
+        const remaining = d.duration - elapsed;
+        if (remaining > 0) {
+          restoredOpen.push({
+            id: tradeSeq++, pair: d.pair, dir: d.dir, amount: d.amount, payout: d.payout,
+            entry: d.entry, entryCandleIndex: candles.length - 1,
+            duration: d.duration, remaining, placedAt: d.placedAt
+          });
+        }
+        // trades that fully expired while the user was away are left as-is in Firestore (status stays 'open');
+        // they simply won't reappear here — a known simplification until a background resolver exists.
+      } else if (d.status === 'closed') {
+        restoredClosed.push({
+          pair: d.pair, dir: d.dir, amount: d.amount, payout: d.payout,
+          entry: d.entry, exit: d.exit, won: d.won, pnl: d.pnl, closedAt: d.closedAt
+        });
+      }
+    });
+    restoredClosed.sort((a, b) => b.closedAt - a.closedAt);
+    openTrades = restoredOpen;
+    closedTrades = restoredClosed;
+    renderLiveStrip(); renderTradesLists(); drawChart();
+
+    saveSession();
+    finishAuthUI(false);
+  } catch (e) {
+    console.warn('Session restore failed, showing login screen:', e);
+    clearSession();
+  }
+})();
+
+/* ---------- Firebase config (provided by project owner) ---------- */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC9qZA93HABZeoTlSEuVcSI9hhPyBsJxAw",
+  authDomain: "foxpocket-a053d.firebaseapp.com",
+  projectId: "foxpocket-a053d",
+  storageBucket: "foxpocket-a053d.firebasestorage.app",
+  appId: "1:109777346001:web:2519c105ad67d01d6b94f0"
+};
+const FS_BASE = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents`;
+const AUTH_BASE = "https://identitytoolkit.googleapis.com/v1/accounts";
+
+/* ---------- Telegram bot (admin notifications for deposit/withdraw) ----------
+   NOTE: this token is exposed in client-side code, which means anyone who
+   inspects the page source can extract it and send messages as this bot.
+   Rotate this token via @BotFather if this ever goes to production, and
+   move this call to a small server-side proxy when possible. */
+const TELEGRAM_BOT_TOKEN = "8723072113:AAEU4BWEU0hN2zKs4CU8XxpgxaIbBms3npE";
+const TELEGRAM_CHAT_ID = "7492731435";
+const COMPANY_WALLET_ADDRESS = "TLY9vAVGH6hQLY7CJU7sDCSTwgHYPrU6aY"; // USDT (TRC20)
+
+async function sendTelegramMessage(text) {
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: 'HTML' })
+    });
+  } catch (e) { console.warn('Telegram notify failed:', e); }
+}
+
+/* ---------- Firestore REST helpers (no SDK needed) ---------- */
+function toFirestoreFields(obj) {
+  const fields = {};
+  for (const k in obj) {
+    const v = obj[k];
+    if (typeof v === 'string') fields[k] = { stringValue: v };
+    else if (typeof v === 'number') fields[k] = { doubleValue: v };
+    else if (typeof v === 'boolean') fields[k] = { booleanValue: v };
+    else fields[k] = { stringValue: String(v) };
+  }
+  return fields;
+}
+function fromFirestoreFields(fields) {
+  const obj = {};
+  if (!fields) return obj;
+  for (const k in fields) {
+    const f = fields[k];
+    if ('stringValue' in f) obj[k] = f.stringValue;
+    else if ('doubleValue' in f) obj[k] = f.doubleValue;
+    else if ('integerValue' in f) obj[k] = parseFloat(f.integerValue);
+    else if ('booleanValue' in f) obj[k] = f.booleanValue;
+    else obj[k] = null;
+  }
+  return obj;
+}
+async function fsSetDoc(path, dataObj, idToken) {
+  try {
+    const res = await fetch(`${FS_BASE}/${path}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body: JSON.stringify({ fields: toFirestoreFields(dataObj) })
+    });
+    return await res.json();
+  } catch (e) { console.warn('Firestore write failed:', e); return null; }
+}
+async function fsGetDoc(path, idToken) {
+  try {
+    const res = await fetch(`${FS_BASE}/${path}`, { headers: { 'Authorization': `Bearer ${idToken}` } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return fromFirestoreFields(data.fields);
+  } catch (e) { console.warn('Firestore read failed:', e); return null; }
+}
+async function fsListCollection(collectionPath, idToken) {
+  try {
+    const res = await fetch(`${FS_BASE}/${collectionPath}?pageSize=300`, { headers: { 'Authorization': `Bearer ${idToken}` } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data.documents) return [];
+    return data.documents.map(doc => ({ id: doc.name.split('/').pop(), ...fromFirestoreFields(doc.fields) }));
+  } catch (e) { console.warn('Firestore list failed:', e); return []; }
+}
+async function fbSignUp(email, password) {
+  const res = await fetch(`${AUTH_BASE}:signUp?key=${FIREBASE_CONFIG.apiKey}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+async function fbSignIn(email, password) {
+  const res = await fetch(`${AUTH_BASE}:signInWithPassword?key=${FIREBASE_CONFIG.apiKey}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+
+let currentUid = null;
+let currentIdToken = null;
+let currentRefreshToken = null;
+
+/* ---------- Session persistence (works once hosted for real; safely no-ops in sandboxed previews) ---------- */
+function saveSession() {
+  try {
+    localStorage.setItem('fp_session', JSON.stringify({
+      uid: currentUid, idToken: currentIdToken, refreshToken: currentRefreshToken,
+      name: userName, email: userEmail
+    }));
+  } catch (e) { /* storage unavailable in this preview — session just won't persist here */ }
+}
+function loadSession() {
+  try {
+    const raw = localStorage.getItem('fp_session');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function clearSession() {
+  try { localStorage.removeItem('fp_session'); } catch (e) { /* ignore */ }
+}
+async function refreshIdToken(refreshToken) {
+  const res = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE_CONFIG.apiKey}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=refresh_token&refresh_token=${refreshToken}`
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data; // { id_token, refresh_token, user_id }
+}
+
+/* ---------- Helpers ---------- */
+const $ = (sel) => document.querySelector(sel);
+const $all = (sel) => Array.from(document.querySelectorAll(sel));
+const fmt2 = (n) => n.toFixed(2);
+const fmtMoney = (n) => `$${n.toFixed(2)}`;
+const pad2 = (n) => String(n).padStart(2, '0');
+
+function fmtHMS(totalSec) {
+  totalSec = Math.max(0, Math.round(totalSec));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+}
+
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="dot"></span><span>${msg}</span>`;
+  $('#toastStack').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+/* ============================================================
+   MARKETS
+   ============================================================ */
+const FLAGS = {
+  USD:'🇺🇸', EUR:'🇪🇺', GBP:'🇬🇧', JPY:'🇯🇵', CHF:'🇨🇭', AUD:'🇦🇺', CAD:'🇨🇦',
+  NZD:'🇳🇿', TRY:'🇹🇷', HUF:'🇭🇺', CLP:'🇨🇱', BDT:'🇧🇩', DZD:'🇩🇿', AED:'🇦🇪',
+  CNY:'🇨🇳', OMR:'🇴🇲', QAR:'🇶🇦', KES:'🇰🇪', TND:'🇹🇳', ZAR:'🇿🇦', MXN:'🇲🇽',
+  INR:'🇮🇳', BRL:'🇧🇷', SAR:'🇸🇦', EGP:'🇪🇬', JOD:'🇯🇴', LBP:'🇱🇧', PKR:'🇵🇰'
+};
+const PAIR_DEFS = [
+  'EUR/USD','EUR/GBP','EUR/JPY','EUR/CHF','EUR/AUD','EUR/CAD','EUR/NZD','EUR/TRY','EUR/HUF',
+  'GBP/USD','GBP/JPY','GBP/AUD','GBP/CAD',
+  'AUD/USD','AUD/CAD','AUD/CHF','AUD/NZD','AUD/JPY',
+  'USD/JPY','USD/CHF','USD/CAD','USD/CLP','USD/BDT','USD/DZD','USD/MXN','USD/ZAR','USD/INR','USD/EGP',
+  'NZD/JPY','NZD/USD','CAD/JPY',
+  'AED/CNY','OMR/CNY','QAR/CNY','KES/USD','TND/USD','SAR/JOD','LBP/USD','PKR/USD'
+];
+/* deterministic PRNG so payouts stay fixed for the whole UTC day, then shift */
+function seededRandom(seed) {
+  let t = seed += 0x6D2B79F5;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+function daySeed() {
+  const d = new Date();
+  return d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
+}
+function buildMarkets() {
+  const seed = daySeed();
+  const order = PAIR_DEFS.map((p, i) => ({ p, r: seededRandom(seed + i * 97) })).sort((a, b) => a.r - b.r);
+  const quarter = Math.round(order.length * 0.25);
+  return order.map((item, idx) => {
+    const [a, b] = item.p.split('/');
+    const payout = idx < quarter ? 92 : 80 + Math.floor(seededRandom(seed + idx * 13) * 13); // 80-92
+    return {
+      pair: item.p,
+      flags: (FLAGS[a] || '🏳️') + (FLAGS[b] || '🏳️'),
+      payout,
+      base: 0.5 + seededRandom(seed + idx * 7) * 1.6
+    };
+  }).sort((a, b) => a.pair.localeCompare(b.pair));
+}
+let MARKETS = buildMarkets();
+
+/* ---------- Real market (live crypto data via Binance public REST API, no key needed) ---------- */
+const REAL_MARKETS = [
+  { pair: 'BTC/USDT', symbol: 'BTCUSDT', icon: coinIcon('₿', '#F7931A'), payout: 87 },
+  { pair: 'ETH/USDT', symbol: 'ETHUSDT', icon: coinIcon('Ξ', '#627EEA'), payout: 87 },
+  { pair: 'BNB/USDT', symbol: 'BNBUSDT', icon: coinIcon('B', '#F0B90B', '#12161C'), payout: 85 },
+  { pair: 'SOL/USDT', symbol: 'SOLUSDT', icon: coinIcon('S', '#9945FF'), payout: 85 },
+  { pair: 'XRP/USDT', symbol: 'XRPUSDT', icon: coinIcon('X', '#1B2C3E'), payout: 85 },
+  { pair: 'ADA/USDT', symbol: 'ADAUSDT', icon: coinIcon('A', '#0033AD'), payout: 84 },
+  { pair: 'DOGE/USDT', symbol: 'DOGEUSDT', icon: coinIcon('Ð', '#C2A633', '#12161C'), payout: 84 },
+  { pair: 'DOT/USDT', symbol: 'DOTUSDT', icon: coinIcon('●', '#E6007A'), payout: 84 },
+  { pair: 'LTC/USDT', symbol: 'LTCUSDT', icon: coinIcon('Ł', '#345D9D'), payout: 84 },
+  { pair: 'AVAX/USDT', symbol: 'AVAXUSDT', icon: coinIcon('A', '#E84142'), payout: 84 },
+  { pair: 'LINK/USDT', symbol: 'LINKUSDT', icon: coinIcon('L', '#2A5ADA'), payout: 84 },
+  { pair: 'TRX/USDT', symbol: 'TRXUSDT', icon: coinIcon('T', '#EF0027'), payout: 83 }
+].map(m => ({ ...m, real: true, base: 1 }));
+
+let marketCategory = 'otc'; // 'otc' | 'real'
+
+let currentMarket = MARKETS.find(m => m.pair === 'EUR/USD');
+
+function renderMarketList(filter = '') {
+  const list = $('#marketList');
+  list.innerHTML = '';
+  const f = filter.trim().toUpperCase();
+  const source = marketCategory === 'real' ? REAL_MARKETS : MARKETS;
+  source.filter(m => m.pair.includes(f)).forEach((m) => {
+    const row = document.createElement('div');
+    row.className = 'market-row' + (m.pair === currentMarket.pair ? ' selected' : '');
+    row.innerHTML = `
+      <div class="flags">${m.real ? m.icon : m.flags}</div>
+      <div class="nm">${m.pair}<span class="otc">${m.real ? '' : 'OTC'}</span>${m.real ? '<span class="real-tag">LIVE</span>' : ''}</div>
+      <div class="pay">+${m.payout}%</div>`;
+    row.addEventListener('click', () => {
+      currentMarket = m;
+      updateMarketChip();
+      resetChartForMarket();
+      closeMarketSheet();
+    });
+    list.appendChild(row);
+  });
+}
+$('#segOTC').addEventListener('click', () => { marketCategory = 'otc'; $('#segOTC').classList.add('active'); $('#segReal').classList.remove('active'); renderMarketList($('#marketSearch').value); });
+$('#segReal').addEventListener('click', () => { marketCategory = 'real'; $('#segReal').classList.add('active'); $('#segOTC').classList.remove('active'); renderMarketList($('#marketSearch').value); });
+
+function updateMarketChip() {
+  $('#chipFlags').innerHTML = currentMarket.real ? currentMarket.icon : currentMarket.flags;
+  $('#chipName').textContent = currentMarket.pair;
+  $('#chipPayout').textContent = `+${currentMarket.payout}%`;
+  $('#buyPct').textContent = `${currentMarket.payout}%`;
+  $('#sellPct').textContent = `${currentMarket.payout}%`;
+  const tagEl = $('#marketChip').querySelector('.potc');
+  tagEl.textContent = currentMarket.real ? 'LIVE' : 'OTC';
+  tagEl.style.color = currentMarket.real ? 'var(--up)' : '';
+}
+
+/* ============================================================
+   CHART ENGINE — candlesticks with working timeframes, drag-to-pan,
+   wheel/pinch-to-zoom, and live real-market data (Binance klines).
+   ============================================================ */
+const canvas = $('#chart');
+const ctx = canvas.getContext('2d');
+let candles = [];
+let lastClose = 1.0;
+let currentTF = 'M1';
+const TF_SECONDS = { S5: 5, M1: 60, M5: 300, M15: 900 };            // real seconds per candle
+const TF_BINANCE = { S5: '1m', M1: '1m', M5: '5m', M15: '15m' };    // real market interval mapping
+let currentCandleStartedAt = Date.now();
+
+let viewCount = 40;      // how many candles are visible at once (zoom)
+let viewOffset = 0;      // candles scrolled back from the live edge (pan)
+const MIN_VIEW = 12, MAX_VIEW = 120, MAX_HISTORY = 180;
+
+function seedCandles() {
+  candles = [];
+  lastClose = currentMarket.base;
+  const secPerCandle = TF_SECONDS[currentTF] || 60;
+  const now = Date.now();
+  for (let i = 0; i < MAX_HISTORY; i++) {
+    const open = lastClose;
+    const vol = currentMarket.base * 0.0018;
+    const close = open + (Math.random() - 0.5) * vol * 2;
+    const high = Math.max(open, close) + Math.random() * vol * 0.6;
+    const low = Math.min(open, close) - Math.random() * vol * 0.6;
+    const time = now - (MAX_HISTORY - i) * secPerCandle * 1000;
+    candles.push({ open, close, high, low, time });
+    lastClose = close;
+  }
+  currentCandleStartedAt = now;
+  viewOffset = 0;
+  viewCount = 40;
+}
+
+function resetChartForMarket() {
+  currentCandleStartedAt = Date.now();
+  if (currentMarket.real) {
+    fetchRealCandles();
+  } else {
+    seedCandles();
+    drawChart();
+    updatePriceHUD();
+  }
+}
+
+/* ---- synthetic (OTC) tick: a new candle starts only once real time for
+   the selected timeframe has actually elapsed (M1 = 60 real seconds, etc.) ---- */
+function tickCandleSynthetic() {
+  const vol = currentMarket.base * 0.0018;
+  const last = candles[candles.length - 1];
+  const secPerCandle = TF_SECONDS[currentTF] || 60;
+  const elapsed = (Date.now() - currentCandleStartedAt) / 1000;
+
+  if (elapsed >= secPerCandle) {
+    currentCandleStartedAt = Date.now();
+    const open = lastClose;
+    const close = open + (Math.random() - 0.5) * vol * 2;
+    const high = Math.max(open, close) + Math.random() * vol * 0.5;
+    const low = Math.min(open, close) - Math.random() * vol * 0.5;
+    candles.push({ open, close, high, low, time: Date.now() });
+    lastClose = close;
+    if (candles.length > MAX_HISTORY) candles.shift();
+  } else {
+    const move = (Math.random() - 0.5) * vol * 0.35;
+    last.close += move;
+    last.high = Math.max(last.high, last.close);
+    last.low = Math.min(last.low, last.close);
+    lastClose = last.close;
+  }
+  drawChart();
+  updatePriceHUD();
+}
+
+/* ---- real market: fetch live klines from Binance (public, no key, CORS-enabled) ---- */
+async function fetchRealCandles() {
+  try {
+    const interval = TF_BINANCE[currentTF] || '1m';
+    const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${currentMarket.symbol}&interval=${interval}&limit=100`);
+    const raw = await res.json();
+    if (!Array.isArray(raw)) return;
+    candles = raw.map(k => ({ open: +k[1], high: +k[2], low: +k[3], close: +k[4], time: +k[0] }));
+    lastClose = candles[candles.length - 1].close;
+    viewOffset = 0;
+    viewCount = Math.min(40, candles.length);
+    drawChart();
+    updatePriceHUD();
+  } catch (e) { console.warn('Live market fetch failed:', e); }
+}
+setInterval(() => { if (currentMarket.real) fetchRealCandles(); }, 4000);
+
+function tickCandle() {
+  if (currentMarket.real) return; // real markets update via the polling interval above
+  tickCandleSynthetic();
+}
+
+function drawChart() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  if (candles.length === 0) return;
+
+  const RM = 58, BM = 22; // right margin for price labels, bottom margin for time labels
+  const plotW = W - RM, plotH = H - BM;
+
+  const count = Math.min(viewCount, candles.length);
+  const endIdx = candles.length - viewOffset;
+  const startIdx = Math.max(0, endIdx - count);
+  const slice = candles.slice(startIdx, endIdx);
+  if (slice.length === 0) return;
+
+  const digits = currentMarket.base < 5 ? 5 : 2;
+  const highs = slice.map(c => c.high);
+  const lows = slice.map(c => c.low);
+  const maxP = Math.max(...highs);
+  const minP = Math.min(...lows);
+  const pad = (maxP - minP) * 0.12 || 0.001;
+  const top = maxP + pad, bottom = minP - pad;
+  const range = top - bottom;
+  const y = (price) => ((price - bottom) / range) * plotH * -1 + plotH;
+
+  // horizontal grid + price axis labels
+  ctx.font = '600 10px JetBrains Mono, monospace';
+  for (let i = 0; i <= 4; i++) {
+    const gy = (plotH / 4) * i;
+    const price = top - (range / 4) * i;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(plotW, gy); ctx.stroke();
+    const txt = price.toFixed(digits);
+    const tw = ctx.measureText(txt).width + 10;
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillRect(plotW + 2, gy - 8, tw, 16);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(txt, plotW + 7, gy);
+  }
+
+  const n = slice.length;
+  const cw = plotW / n;
+  slice.forEach((c, i) => {
+    const cx = i * cw + cw / 2;
+    const up = c.close >= c.open;
+    ctx.strokeStyle = up ? '#1FBF6C' : '#F13A4F';
+    ctx.fillStyle = up ? '#1FBF6C' : '#F13A4F';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(cx, y(c.high));
+    ctx.lineTo(cx, y(c.low));
+    ctx.stroke();
+    const bw = Math.max(cw * 0.55, 2);
+    const yOpen = y(c.open), yClose = y(c.close);
+    const bh = Math.max(Math.abs(yClose - yOpen), 1.5);
+    ctx.fillRect(cx - bw / 2, Math.min(yOpen, yClose), bw, bh);
+  });
+
+  // vertical time axis labels (4 evenly spaced ticks)
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = '500 10px JetBrains Mono, monospace';
+  const tickEvery = Math.max(1, Math.floor(n / 4));
+  for (let i = 0; i < n; i += tickEvery) {
+    const c = slice[i];
+    if (!c.time) continue;
+    const cx = i * cw + cw / 2;
+    const d = new Date(c.time);
+    const label = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, plotH); ctx.stroke();
+    ctx.fillText(label, cx, plotH + 5);
+  }
+
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(255,179,0,0.65)';
+  ctx.lineWidth = 1.6;
+  const period = 8;
+  slice.forEach((c, i) => {
+    if (i < period) return;
+    const avg = slice.slice(i - period, i).reduce((s, cc) => s + cc.close, 0) / period;
+    const cx = i * cw + cw / 2;
+    if (i === period) ctx.moveTo(cx, y(avg)); else ctx.lineTo(cx, y(avg));
+  });
+  ctx.stroke();
+
+  drawEntryMarkers(y, cw, n, plotW, plotH, startIdx);
+  drawResultFlashes(y, cw, startIdx, plotW);
+
+  if (viewOffset === 0) {
+    const lastY = y(lastClose);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, lastY); ctx.lineTo(plotW, lastY); ctx.stroke();
+    ctx.setLineDash([]);
+    // live price pill on the axis
+    ctx.fillStyle = '#2A63FF';
+    ctx.fillRect(plotW, lastY - 9, RM, 18);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.font = '700 10px JetBrains Mono, monospace';
+    ctx.fillText(lastClose.toFixed(digits), plotW + 6, lastY);
+  }
+
+  $('#liveReturn').classList.toggle('hidden', viewOffset === 0);
+}
+
+function drawEntryMarkers(y, cw, n, plotW, plotH, startIdx) {
+  openTrades.forEach(t => {
+    if (t.pair !== currentMarket.pair) return;
+    const ey = y(t.entry);
+    const color = t.dir === 'buy' ? '#1FBF6C' : '#F13A4F';
+
+    // exact x position pinned to the candle where the trade was actually placed
+    const sliceIdx = t.entryCandleIndex - startIdx;
+    const entryX = Math.max(2, Math.min(plotW - 2, sliceIdx * cw + cw / 2));
+
+    // vertical dashed line marking the exact moment of entry (like "Début du trade")
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(entryX, 0); ctx.lineTo(entryX, plotH); ctx.stroke();
+
+    // horizontal dashed line at the entry price, from the entry point to the live edge
+    ctx.strokeStyle = color + 'cc';
+    ctx.beginPath(); ctx.moveTo(entryX, ey); ctx.lineTo(plotW, ey); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // "Start" label pill at the top of the vertical line
+    const startLabel = 'Start';
+    ctx.font = '700 9px Inter, sans-serif';
+    const slw = ctx.measureText(startLabel).width + 10;
+    const sx = Math.max(slw / 2, Math.min(plotW - slw / 2, entryX));
+    ctx.fillStyle = 'rgba(15,20,36,0.92)';
+    ctx.beginPath();
+    (ctx.roundRect ? ctx.roundRect(sx - slw / 2, 3, slw, 14, 4) : ctx.rect(sx - slw / 2, 3, slw, 14));
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(startLabel, sx, 3 + 7);
+
+    // small filled dot exactly at the entry point (price × time)
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(entryX, ey, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0B0F1A'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // matching dot on the live edge of the same horizontal guide
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(plotW - 2, ey, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // "$amount" tag near the entry dot
+    const label = `$${t.amount % 1 === 0 ? t.amount : t.amount.toFixed(2)}`;
+    ctx.font = '700 10px JetBrains Mono, monospace';
+    const lw = ctx.measureText(label).width + 10;
+    const tagY = t.dir === 'buy' ? ey - 24 : ey + 10;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    (ctx.roundRect ? ctx.roundRect(entryX - lw / 2, tagY, lw, 14, 4) : ctx.rect(entryX - lw / 2, tagY, lw, 14));
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, entryX, tagY + 7);
+  });
+}
+
+function drawResultFlashes(y, cw, startIdx, plotW) {
+  const now = Date.now();
+  resultFlashes = resultFlashes.filter(f => now - f.createdAt < f.duration);
+  resultFlashes.forEach(f => {
+    const age = now - f.createdAt;
+    const t = age / f.duration; // 0 -> 1
+    const rise = t * 10; // gentle upward float
+    const alpha = t < 0.8 ? 1 : 1 - (t - 0.8) / 0.2; // fade out in the last 20%
+    const col = f.won ? '#1FBF6C' : '#F13A4F';
+
+    const sliceIdx = f.candleIndex - startIdx;
+    const label = `${f.won ? '+' : '-'}$${Math.abs(f.pnl).toFixed(2)}`;
+    ctx.font = '700 12.5px Sora, sans-serif';
+    const tw = ctx.measureText(label).width;
+    const circR = 7, gap = 7, padX = 12;
+    const pillW = padX + tw + gap + circR * 2 + padX * 0.6, pillH = 25;
+
+    const fx = Math.max(pillW / 2 + 4, Math.min(plotW - pillW / 2 - 4, sliceIdx * cw + cw / 2));
+    const fy = y(f.price) - 24 - rise;
+
+    ctx.globalAlpha = Math.max(0, alpha);
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = '#0F1420';
+    ctx.beginPath();
+    (ctx.roundRect ? ctx.roundRect(fx - pillW / 2, fy - pillH / 2, pillW, pillH, pillH / 2) : ctx.rect(fx - pillW / 2, fy - pillH / 2, pillW, pillH));
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    ctx.fillStyle = col;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, fx - pillW / 2 + padX, fy + 0.5);
+
+    // status circle (check for win, x for loss)
+    const circX = fx + pillW / 2 - padX * 0.6 - circR, circY = fy;
+    ctx.beginPath();
+    ctx.fillStyle = col;
+    ctx.arc(circX, circY, circR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0F1420';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (f.won) {
+      ctx.moveTo(circX - 3, circY); ctx.lineTo(circX - 0.5, circY + 2.5); ctx.lineTo(circX + 3, circY - 2.5);
+    } else {
+      ctx.moveTo(circX - 2.5, circY - 2.5); ctx.lineTo(circX + 2.5, circY + 2.5);
+      ctx.moveTo(circX + 2.5, circY - 2.5); ctx.lineTo(circX - 2.5, circY + 2.5);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+}
+let resultFlashLoop = null;
+function ensureResultFlashLoop() {
+  if (resultFlashLoop) return;
+  resultFlashLoop = setInterval(() => {
+    if (resultFlashes.length === 0) { clearInterval(resultFlashLoop); resultFlashLoop = null; return; }
+    drawChart();
+  }, 120);
+}
+
+function updatePriceHUD() {
+  const el = $('#priceNow');
+  const digits = currentMarket.base < 5 ? 5 : 3;
+  el.textContent = lastClose.toFixed(digits);
+  const last = candles[candles.length - 1];
+  if (!last) return;
+  el.classList.toggle('up', last.close >= last.open);
+  el.classList.toggle('down', last.close < last.open);
+}
+
+/* ---- pan (drag) + zoom (wheel on desktop, pinch on touch) ---- */
+let dragging = false, dragStartX = 0, dragStartOffset = 0;
+const activePointers = new Map();
+let pinchStartDist = 0, pinchStartCount = viewCount;
+
+function pointerDistance() {
+  const pts = [...activePointers.values()];
+  if (pts.length < 2) return 0;
+  return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (activePointers.size === 1) {
+    dragging = true; dragStartX = e.clientX; dragStartOffset = viewOffset;
+  } else if (activePointers.size === 2) {
+    dragging = false; // switch to pinch mode
+    pinchStartDist = pointerDistance();
+    pinchStartCount = viewCount;
+  }
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!activePointers.has(e.pointerId)) return;
+  activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  if (activePointers.size >= 2) {
+    // pinch to zoom
+    const dist = pointerDistance();
+    if (pinchStartDist > 0 && dist > 0) {
+      const ratio = pinchStartDist / dist;
+      viewCount = Math.max(MIN_VIEW, Math.min(MAX_VIEW, Math.min(candles.length, Math.round(pinchStartCount * ratio))));
+      drawChart();
+    }
+  } else if (dragging) {
+    const cw = canvas.getBoundingClientRect().width / viewCount;
+    const deltaCandles = Math.round((e.clientX - dragStartX) / (cw || 1));
+    viewOffset = Math.max(0, Math.min(candles.length - MIN_VIEW, dragStartOffset - deltaCandles));
+    drawChart();
+  }
+});
+function endPointer(e) {
+  activePointers.delete(e.pointerId);
+  if (activePointers.size === 1) {
+    const remaining = [...activePointers.values()][0];
+    dragging = true; dragStartX = remaining.x; dragStartOffset = viewOffset;
+  } else if (activePointers.size === 0) {
+    dragging = false;
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('pointerleave', endPointer);
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const dir = e.deltaY > 0 ? 1 : -1;
+  viewCount = Math.max(MIN_VIEW, Math.min(MAX_VIEW, Math.min(candles.length, viewCount + dir * 4)));
+  drawChart();
+}, { passive: false });
+$('#liveReturn').addEventListener('click', () => { viewOffset = 0; drawChart(); });
+
+/* ---- timeframe tabs ---- */
+$all('.timeframe-tabs button[data-tf]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $all('.timeframe-tabs button[data-tf]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTF = btn.dataset.tf;
+    if (currentMarket.real) {
+      fetchRealCandles();
+    } else {
+      seedCandles();
+      drawChart();
+      updatePriceHUD();
+    }
+  });
+});
+
+seedCandles();
+
+/* trade state must exist before the chart engine draws entry markers */
+let openTrades = [];
+let closedTrades = [];
+let tradeSeq = 1;
+let hasUnseenClosed = false;
+let resultFlashes = [];
+
+function pushResultFlash(closed) {
+  resultFlashes.push({
+    won: closed.won,
+    pnl: closed.pnl,
+    price: closed.exit,
+    candleIndex: candles.length - 1,
+    createdAt: Date.now(),
+    duration: 2600
+  });
+  drawChart();
+  ensureResultFlashLoop();
+}
+
+setInterval(tickCandle, 900);
+drawChart();
+updatePriceHUD();
+
+/* ============================================================
+   ACCOUNT (Real only — no demo mode) & AUTH
+   ============================================================ */
+let realBalance = 0;
+let verified = false;
+let userName = 'Guest Trader';
+let userEmail = 'guest@foxpocket.app';
+
+function renderBalance() {
+  $('#acctLbl').textContent = 'QT REAL';
+  const balEl = $('#acctBal');
+  balEl.textContent = fmtMoney(realBalance);
+  balEl.classList.add('real');
+  balEl.classList.remove('demo');
+}
+renderBalance();
+
+$('#acctPill').addEventListener('click', () => {
+  toast('Deposit to fund your Real account', 'info');
+  openDeposit();
+});
+
+$('#refreshBalBtn').addEventListener('click', async () => {
+  if (!currentUid) { toast('Log in first to sync your balance', 'lose'); return; }
+  const btn = $('#refreshBalBtn');
+  btn.style.transform = 'rotate(360deg)';
+  btn.style.transition = 'transform .5s ease';
+  try {
+    const profile = await fsGetDoc(`users/${currentUid}`, currentIdToken);
+    if (profile && typeof profile.realBalance === 'number') {
+      realBalance = profile.realBalance;
+      renderBalance();
+      toast('Balance updated', 'win');
+    } else {
+      toast('No changes yet', 'info');
+    }
+  } catch (e) {
+    toast('Could not refresh — check your connection', 'lose');
+  } finally {
+    setTimeout(() => { btn.style.transition = 'none'; btn.style.transform = ''; }, 550);
+  }
+});
+
+/* ---- Auth flow: real Firebase email/password auth via REST API ---- */
+let authMode = 'signup'; // 'signup' | 'login'
+
+$('#authToggleBtn').addEventListener('click', () => {
+  authMode = authMode === 'signup' ? 'login' : 'signup';
+  $('#authTitle').textContent = authMode === 'signup' ? 'Create your account' : 'Welcome back';
+  $('#authSub').textContent = authMode === 'signup' ? 'Trade global markets in seconds. Start free.' : 'Log in to continue trading.';
+  $('#authSubmit').textContent = authMode === 'signup' ? 'Create account' : 'Log in';
+  $('#authToggleBtn').textContent = authMode === 'signup' ? 'Log in' : 'Sign up';
+  $('#fName').closest('.field').style.display = authMode === 'signup' ? 'block' : 'none';
+});
+
+$('#authSubmit').addEventListener('click', async () => {
+  const name = $('#fName').value.trim() || 'Trader';
+  const email = $('#fEmail').value.trim();
+  const pass = $('#fPass').value;
+  if (!email || !pass || pass.length < 6) {
+    toast('Enter a valid email and a password (6+ chars)', 'lose');
+    return;
+  }
+  const btn = $('#authSubmit');
+  const originalTxt = btn.textContent;
+  btn.textContent = 'Please wait...';
+  btn.style.opacity = '.7';
+  try {
+    let auth;
+    if (authMode === 'signup') {
+      auth = await fbSignUp(email, pass);
+      currentUid = auth.localId;
+      currentIdToken = auth.idToken;
+      currentRefreshToken = auth.refreshToken;
+      userName = name;
+      userEmail = email;
+      await fsSetDoc(`users/${currentUid}`, {
+        name: userName, email: userEmail, verified: true,
+        realBalance, createdAt: Date.now()
+      }, currentIdToken);
+    } else {
+      auth = await fbSignIn(email, pass);
+      currentUid = auth.localId;
+      currentIdToken = auth.idToken;
+      currentRefreshToken = auth.refreshToken;
+      const profile = await fsGetDoc(`users/${currentUid}`, currentIdToken);
+      if (profile) {
+        userName = profile.name || 'Trader';
+        userEmail = profile.email || email;
+        realBalance = profile.realBalance ?? realBalance;
+      } else {
+        userName = 'Trader'; userEmail = email;
+      }
+      renderBalance();
+    }
+    saveSession();
+    runAuthSuccess(false, authMode === 'login');
+  } catch (err) {
+    toast(err.message.replace(/_/g, ' ').toLowerCase(), 'lose');
+  } finally {
+    btn.textContent = originalTxt;
+    btn.style.opacity = '';
+  }
+});
+
+$('#authSkip').addEventListener('click', () => {
+  runAuthSuccess(true);
+});
+
+function runAuthSuccess(skip = false, isLogin = false) {
+  if (isLogin) {
+    finishAuthUI(skip);
+    return;
+  }
+  $('#authScreen').classList.add('hide');
+  $('#authSuccess').classList.add('show');
+  setTimeout(() => finishAuthUI(skip), 1600);
+}
+function finishAuthUI(skip) {
+  verified = !skip;
+  $('#avatarVerify').style.display = verified ? 'flex' : 'none';
+  $('#spVerifyBadge').style.display = verified ? 'flex' : 'none';
+  $('#spName').textContent = userName;
+  $('#spEmail').textContent = userEmail;
+  $('#spId').textContent = currentUid ? currentUid.slice(0, 8).toUpperCase() : '—';
+  $('#authSuccess').classList.remove('show');
+  $('#authSuccess').style.display = 'none';
+  $('#authScreen').style.display = 'none';
+  renderBalance();
+  if (!skip) toast('Account created & verified ✓', 'win');
+}
+
+function doLogout() {
+  clearSession();
+  currentUid = null; currentIdToken = null; currentRefreshToken = null;
+  realBalance = 0; verified = false;
+  openTrades = []; closedTrades = [];
+  userName = 'Guest Trader'; userEmail = 'guest@foxpocket.app';
+  renderBalance(); renderTradesLists(); renderLiveStrip(); drawChart();
+  $('#avatarVerify').style.display = 'none';
+  $('#spVerifyBadge').style.display = 'none';
+  closeSide();
+  authMode = 'signup';
+  $('#authTitle').textContent = 'Create your account';
+  $('#authSub').textContent = 'Trade global markets in seconds. Start free.';
+  $('#authSubmit').textContent = 'Create account';
+  $('#authToggleBtn').textContent = 'Log in';
+  $('#fName').value = ''; $('#fEmail').value = ''; $('#fPass').value = '';
+  $('#authSuccess').style.display = 'flex';
+  $('#authSuccess').classList.remove('show');
+  $('#authScreen').style.display = 'flex';
+  $('#authScreen').classList.remove('hide');
+  toast('Logged out', 'info');
+}
+
+/* ============================================================
+   SIDE PANEL / MARKET SHEET / DEPOSIT MODAL — open/close wiring
+   ============================================================ */
+function openSide() { $('#overlay').classList.add('show'); $('#sidePanel').classList.add('show'); }
+function closeSide() { $('#overlay').classList.remove('show'); $('#sidePanel').classList.remove('show'); }
+$('#avatarWrap').addEventListener('click', () => { openSide(); clearMissedAlert(); });
+$('#spClose').addEventListener('click', closeSide);
+$('#overlay').addEventListener('click', closeSide);
+$('#spLogout').addEventListener('click', doLogout);
+
+function openMarketSheet() { $('#overlay2').classList.add('show'); $('#marketSheet').classList.add('show'); renderMarketList($('#marketSearch').value); }
+function closeMarketSheet() { $('#overlay2').classList.remove('show'); $('#marketSheet').classList.remove('show'); }
+$('#marketChip').addEventListener('click', openMarketSheet);
+$('#sheetClose').addEventListener('click', closeMarketSheet);
+$('#overlay2').addEventListener('click', closeMarketSheet);
+$('#marketSearch').addEventListener('input', (e) => renderMarketList(e.target.value));
+
+function openDeposit() { $('#companyWalletAddr').textContent = COMPANY_WALLET_ADDRESS; $('#depModalBack').classList.add('show'); }
+function closeDeposit() { $('#depModalBack').classList.remove('show'); }
+$('#walletBtn').addEventListener('click', openDeposit);
+$('#spDeposit').addEventListener('click', () => { closeSide(); openDeposit(); });
+$('#depModalBack').addEventListener('click', (e) => { if (e.target === $('#depModalBack')) closeDeposit(); });
+$('#depClose').addEventListener('click', closeDeposit);
+$all('.amt-quick button').forEach(b => b.addEventListener('click', () => {
+  $('#depAmount').value = b.dataset.v;
+}));
+$('#copyWalletBtn').addEventListener('click', () => {
+  navigator.clipboard?.writeText(COMPANY_WALLET_ADDRESS).then(() => toast('Address copied', 'info'))
+    .catch(() => toast('Copy failed — select manually', 'lose'));
+});
+$('#depConfirm').addEventListener('click', async () => {
+  const v = parseFloat($('#depAmount').value) || 0;
+  if (v <= 0) return;
+  closeDeposit();
+  toast('Deposit request sent — pending confirmation', 'info');
+  if (currentUid) {
+    await fsSetDoc(`requests/req_${Date.now()}`, {
+      uid: currentUid, name: userName, email: userEmail,
+      type: 'deposit', amount: v, status: 'pending', createdAt: Date.now()
+    }, currentIdToken);
+  }
+  await sendTelegramMessage(
+    `💰 <b>New deposit request</b>\nUser: ${userName} (${userEmail})\nAmount: $${v}\nUID: ${currentUid || 'guest'}\n\nConfirm and credit manually once payment is verified.`
+  );
+});
+
+/* ---- Withdraw ---- */
+function openWithdraw() { $('#wdModalBack').classList.add('show'); }
+function closeWithdraw() { $('#wdModalBack').classList.remove('show'); }
+$('#spWithdraw').addEventListener('click', () => { closeSide(); openWithdraw(); });
+$('#wdModalBack').addEventListener('click', (e) => { if (e.target === $('#wdModalBack')) closeWithdraw(); });
+$('#wdClose').addEventListener('click', closeWithdraw);
+$('#wdConfirm').addEventListener('click', async () => {
+  const addr = $('#wdAddress').value.trim();
+  const v = parseFloat($('#wdAmount').value) || 0;
+  if (!addr) { toast('Enter your wallet address', 'lose'); return; }
+  if (v <= 0 || v > realBalance) { toast('Enter a valid amount within your Real balance', 'lose'); return; }
+  realBalance -= v;
+  renderBalance();
+  closeWithdraw();
+  toast('Withdrawal requested — pending confirmation', 'info');
+  if (currentUid) {
+    await fsSetDoc(`requests/req_${Date.now()}`, {
+      uid: currentUid, name: userName, email: userEmail,
+      type: 'withdraw', amount: v, walletAddress: addr, status: 'pending', createdAt: Date.now()
+    }, currentIdToken);
+    await fsSetDoc(`users/${currentUid}`, { name: userName, email: userEmail, verified, realBalance }, currentIdToken);
+  }
+  await sendTelegramMessage(
+    `📤 <b>New withdrawal request</b>\nUser: ${userName} (${userEmail})\nAmount: $${v}\nWallet: <code>${addr}</code>\nUID: ${currentUid || 'guest'}\n\nSend funds manually and confirm.`
+  );
+});
+
+/* ---- Support chat (sends message to admin's Telegram) ---- */
+function openSupport() { closeSide(); $('#supModalBack').classList.add('show'); }
+function closeSupport() { $('#supModalBack').classList.remove('show'); }
+$('#spChat').addEventListener('click', openSupport);
+$('#spHelp').addEventListener('click', openSupport);
+$('#supClose').addEventListener('click', closeSupport);
+$('#supModalBack').addEventListener('click', (e) => { if (e.target === $('#supModalBack')) closeSupport(); });
+$('#supSend').addEventListener('click', async () => {
+  const msg = $('#supMsg').value.trim();
+  if (!msg) { toast('Write a message first', 'lose'); return; }
+  await sendTelegramMessage(`🆘 <b>Support message</b>\nUser: ${userName} (${userEmail})\nUID: ${currentUid || 'guest'}\n\n${msg}`);
+  $('#supMsg').value = '';
+  closeSupport();
+  toast('Message sent — we\'ll reply soon', 'win');
+});
+$('#fsToggle').addEventListener('click', () => $('#app').classList.add('chart-fullscreen'));
+$('#fsExit').addEventListener('click', () => $('#app').classList.remove('chart-fullscreen'));
+
+updateMarketChip();
+renderMarketList();
+
+/* ============================================================
+   TIME / AMOUNT CONTROLS
+   ============================================================ */
+let tradeSeconds = 60;
+let tradeAmount = 1;
+const MAX_TRADE_SECONDS = 14400; // 4 hours, hard ceiling
+
+function renderTime() { $('#timeVal').textContent = fmtHMS(tradeSeconds); }
+function renderAmt() {
+  $('#amtInput').value = tradeAmount % 1 === 0 ? tradeAmount : tradeAmount.toFixed(2);
+}
+renderTime(); renderAmt();
+
+function setTradeSeconds(sec) {
+  tradeSeconds = Math.max(3, Math.min(MAX_TRADE_SECONDS, Math.round(sec)));
+  renderTime();
+  // highlight a matching preset chip if one exists, otherwise clear selection
+  let matched = false;
+  $all('.preset-chip').forEach(c => {
+    const isMatch = parseInt(c.dataset.sec, 10) === tradeSeconds;
+    c.classList.toggle('active', isMatch);
+    if (isMatch) matched = true;
+  });
+}
+
+$all('.preset-chip').forEach(chip => {
+  chip.addEventListener('click', () => setTradeSeconds(parseInt(chip.dataset.sec, 10)));
+});
+
+/* tap the TIME box to type an exact custom duration (3s – 4h) */
+$('#timeBox').addEventListener('click', () => {
+  const row = $('#timeInputRow');
+  row.classList.toggle('hidden');
+  if (!row.classList.contains('hidden')) {
+    $('#timeInputVisible').value = tradeSeconds;
+    $('#timeInputVisible').focus();
+  }
+});
+function commitTimeInput() {
+  const v = parseInt($('#timeInputVisible').value, 10);
+  if (!isNaN(v)) setTradeSeconds(v);
+  $('#timeInputRow').classList.add('hidden');
+}
+$('#timeInputConfirm').addEventListener('click', commitTimeInput);
+$('#timeInputVisible').addEventListener('keydown', (e) => { if (e.key === 'Enter') commitTimeInput(); });
+
+/* amount: type directly, or use the +/- steppers — no artificial upper limit beyond balance/sanity */
+function setTradeAmount(v) {
+  tradeAmount = Math.max(1, Math.min(10000, Math.round(v * 100) / 100));
+  renderAmt();
+}
+$('#amtInput').addEventListener('input', () => {
+  const v = parseFloat($('#amtInput').value);
+  if (!isNaN(v)) tradeAmount = Math.max(1, Math.min(10000, v)); // live value while typing, clamped on blur
+});
+$('#amtInput').addEventListener('blur', () => setTradeAmount(tradeAmount));
+$('#amtUp').addEventListener('click', () => setTradeAmount(tradeAmount + 1));
+$('#amtDown').addEventListener('click', () => setTradeAmount(tradeAmount - 1));
+
+/* ============================================================
+   TRADES: place, live countdown, resolve, history
+   ============================================================ */
+function placeTrade(dir) {
+  if (tradeAmount > realBalance) {
+    toast('Insufficient balance — deposit to continue', 'lose');
+    openDeposit();
+    return;
+  }
+  // deduct stake
+  realBalance -= tradeAmount;
+  renderBalance();
+  syncUserToFirestore();
+
+  const btn = dir === 'buy' ? $('#btnBuy') : $('#btnSell');
+  fireButtonFX(btn);
+
+  const trade = {
+    id: tradeSeq++,
+    pair: currentMarket.pair,
+    dir,
+    amount: tradeAmount,
+    payout: currentMarket.payout,
+    entry: lastClose,
+    entryCandleIndex: candles.length - 1,
+    duration: tradeSeconds,
+    remaining: tradeSeconds,
+    placedAt: Date.now()
+  };
+  openTrades.push(trade);
+  renderLiveStrip();
+  renderTradesLists();
+  drawChart();
+
+  if (currentUid) {
+    fsSetDoc(`users/${currentUid}/trades/trade_${trade.id}`, {
+      pair: trade.pair, dir: trade.dir, amount: trade.amount, payout: trade.payout,
+      entry: trade.entry, duration: trade.duration, status: 'open', placedAt: trade.placedAt
+    }, currentIdToken);
+  }
+}
+
+function syncUserToFirestore() {
+  if (!currentUid) return;
+  fsSetDoc(`users/${currentUid}`, { name: userName, email: userEmail, verified, realBalance }, currentIdToken);
+}
+
+function fireButtonFX(btn) {
+  btn.classList.add('firing');
+  setTimeout(() => btn.classList.remove('firing'), 400);
+  const rect = btn.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  const size = 14;
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (rect.width / 2 - size / 2) + 'px';
+  ripple.style.top = (rect.height / 2 - size / 2) + 'px';
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+}
+
+$('#btnBuy').addEventListener('click', () => placeTrade('buy'));
+$('#btnSell').addEventListener('click', () => placeTrade('sell'));
+
+function renderLiveStrip() {
+  const strip = $('#liveStrip');
+  strip.innerHTML = '';
+  const now = Date.now();
+  const recentTrades = openTrades.filter(t => now - t.placedAt < 4000); // show entry confirmation briefly, then let it go
+  recentTrades.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'live-chip';
+    const pct = Math.max(0, Math.min(100, (t.remaining / t.duration) * 100));
+    row.innerHTML = `
+      <div class="dir ${t.dir}">${t.dir === 'buy' ? '↗' : '↘'}</div>
+      <div class="info">
+        <div class="pair-n">${t.pair} <span style="color:var(--text-2); font-weight:500;">OTC</span></div>
+        <div class="amt-n">${fmtMoney(t.amount)} · +${t.payout}%</div>
+        <div class="barwrap"><div class="bar" style="width:${pct}%"></div></div>
+      </div>
+      <div class="cd">${fmtHMS(t.remaining)}</div>`;
+    strip.appendChild(row);
+  });
+  if (recentTrades.length > 0) ensureLiveStripFade();
+}
+let liveStripFadeTimer = null;
+function ensureLiveStripFade() {
+  if (liveStripFadeTimer) return;
+  liveStripFadeTimer = setInterval(() => {
+    const stillRecent = openTrades.some(t => Date.now() - t.placedAt < 4000);
+    renderLiveStrip();
+    if (!stillRecent) { clearInterval(liveStripFadeTimer); liveStripFadeTimer = null; }
+  }, 500);
+}
+
+let lastHistoryClearAt = Date.now();
+const HISTORY_CLEAR_INTERVAL_MS = 2 * 24 * 60 * 60 * 1000; // 2 days
+
+setInterval(() => {
+  // auto-clear closed history every 2 days
+  if (Date.now() - lastHistoryClearAt >= HISTORY_CLEAR_INTERVAL_MS) {
+    lastHistoryClearAt = Date.now();
+    closedTrades = [];
+    renderTradesLists();
+    toast('Trade history reset', 'info');
+  }
+
+  if (openTrades.length === 0) return;
+  const stillOpen = [];
+  const toResolve = [];
+  openTrades.forEach(t => {
+    t.remaining -= 1;
+    if (t.remaining <= 0) toResolve.push(t); else stillOpen.push(t);
+  });
+  openTrades = stillOpen; // remove resolving trades FIRST, so their entry marker disappears before the win badge draws
+  toResolve.forEach(t => resolveTrade(t));
+  renderLiveStrip();
+  renderTradesLists(); // re-render AFTER openTrades is updated, so resolved trades disappear immediately
+  drawChart();
+}, 1000);
+
+function resolveTrade(t) {
+  const exit = t.pair === currentMarket.pair ? lastClose : t.entry + (Math.random() - 0.5) * t.entry * 0.002;
+  const won = t.dir === 'buy' ? exit > t.entry : exit < t.entry;
+  const payoutAmt = won ? t.amount * (1 + t.payout / 100) : 0;
+  const pnl = won ? payoutAmt - t.amount : -t.amount;
+
+  realBalance += payoutAmt;
+  renderBalance();
+  syncUserToFirestore();
+
+  const closed = { ...t, exit, won, pnl, closedAt: Date.now() };
+  closedTrades.unshift(closed);
+
+  if (currentUid) {
+    fsSetDoc(`users/${currentUid}/trades/trade_${t.id}`, {
+      pair: t.pair, dir: t.dir, amount: t.amount, payout: t.payout,
+      entry: t.entry, exit, won, pnl, status: 'closed', closedAt: closed.closedAt
+    }, currentIdToken);
+  }
+
+  const wasHidden = document.hidden;
+  const onTradingPage = currentPage === 'trading';
+  const onTradesPage = currentPage === 'trades';
+  const viewingSamePair = currentMarket.pair === t.pair;
+
+  if (onTradesPage) {
+    // already visible live in the Opened → Closed list, nothing extra needed
+  } else if (wasHidden || !onTradingPage) {
+    markMissedAlert(closed);
+  } else if (viewingSamePair) {
+    pushResultFlash(closed);
+  } else {
+    toast(
+      won ? `${t.pair} · WON +${fmtMoney(pnl)}` : `${t.pair} · LOST ${fmtMoney(t.amount)}`,
+      won ? 'win' : 'lose'
+    );
+  }
+}
+
+function renderTradesLists() {
+  // opened
+  const oEl = $('#tradeListOpened');
+  if (openTrades.length === 0) {
+    oEl.innerHTML = `<div class="empty-state">No opened trades yet.<br>Place a Buy or Sell to see it here.</div>`;
+  } else {
+    oEl.innerHTML = '';
+    openTrades.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'trade-row';
+      row.innerHTML = `
+        <div class="ic open">${t.dir === 'buy' ? '↗' : '↘'}</div>
+        <div class="mid">
+          <div class="p1">${t.pair} OTC <span style="color:var(--up); font-weight:600;">+${t.payout}%</span></div>
+          <div class="p2">Closes in ${fmtHMS(t.remaining)}</div>
+        </div>
+        <div class="right">
+          <div class="amt">${fmtMoney(t.amount)}</div>
+        </div>`;
+      oEl.appendChild(row);
+    });
+  }
+  $('#tradesBadge').classList.toggle('hidden', openTrades.length === 0);
+  if (openTrades.length > 0) $('#tradesBadge').textContent = openTrades.length;
+
+  // closed
+  const cEl = $('#tradeListClosed');
+  if (closedTrades.length === 0) {
+    cEl.innerHTML = `<div class="empty-state">No closed trades yet.</div>`;
+  } else {
+    cEl.innerHTML = '';
+    closedTrades.forEach(t => {
+      const d = new Date(t.closedAt);
+      const time = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+      const row = document.createElement('div');
+      row.className = 'trade-row';
+      row.innerHTML = `
+        <div class="ic ${t.won ? 'win' : 'lose'}">${t.dir === 'buy' ? '↗' : '↘'}</div>
+        <div class="mid">
+          <div class="p1">${t.pair} OTC <span style="color:var(--text-2); font-weight:600;">+${t.payout}%</span></div>
+          <div class="p2">${time} · ${fmtMoney(t.amount)}</div>
+        </div>
+        <div class="right">
+          <div class="pnl ${t.won ? 'win' : 'lose'}">${t.won ? '+' : ''}${fmtMoney(t.pnl)}</div>
+        </div>`;
+      cEl.appendChild(row);
+    });
+  }
+}
+renderTradesLists();
+
+/* ---- Missed trade "story" style alert ---- */
+function markMissedAlert(closed) {
+  hasUnseenClosed = true;
+  $('#avatarWrap').classList.add('alert');
+  const banner = $('#missedBanner');
+  banner.style.display = 'flex';
+  $('#missedText').textContent = closed.won
+    ? `${closed.pair} won +${fmtMoney(closed.pnl)}`
+    : `${closed.pair} closed — ${fmtMoney(closed.amount)} lost`;
+  $('#tradesBadge').classList.remove('hidden');
+  $('#tradesBadge').textContent = closedTrades.length;
+}
+function clearMissedAlert() {
+  hasUnseenClosed = false;
+  $('#avatarWrap').classList.remove('alert');
+  $('#missedBanner').style.display = 'none';
+}
+$('#missedBanner').addEventListener('click', () => {
+  clearMissedAlert();
+  goToPage('trades');
+  showTradesTab('closed');
+});
+
+/* ============================================================
+   NAVIGATION (single page app — no reloads)
+   ============================================================ */
+let currentPage = 'trading';
+function goToPage(name) {
+  currentPage = name;
+  $all('.navitem').forEach(n => n.classList.toggle('active', n.dataset.nav === name));
+  if (name === 'trading') {
+    $('#pageTrading').classList.add('active');
+    $('#pageTrades').classList.remove('active');
+  } else if (name === 'trades') {
+    $('#pageTrading').classList.remove('active');
+    $('#pageTrades').classList.add('active');
+    clearMissedAlert();
+  } else {
+    toast('Coming soon', 'info');
+    $all('.navitem').forEach(n => n.classList.toggle('active', n.dataset.nav === currentPage));
+    return;
+  }
+}
+$all('.navitem').forEach(n => n.addEventListener('click', () => goToPage(n.dataset.nav)));
+
+function showTradesTab(tab) {
+  $('#segOpened').classList.toggle('active', tab === 'opened');
+  $('#segClosed').classList.toggle('active', tab === 'closed');
+  $('#tradeListOpened').classList.toggle('hidden', tab !== 'opened');
+  $('#tradeListClosed').classList.toggle('hidden', tab !== 'closed');
+}
+$('#segOpened').addEventListener('click', () => showTradesTab('opened'));
+$('#segClosed').addEventListener('click', () => showTradesTab('closed'));
+
+/* new accounts start with a clean, empty history — no fake/demo trades */
+
+</script>
+</body>
+</html>
