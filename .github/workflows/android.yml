@@ -13,14 +13,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: PWA to Android APK
-        uses: pwabuilder/pwa-action@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          manifest-url: 'https://fox1pocket.github.io/foxpocket/manifest.json'
+          node-version: 20
 
-      - name: Upload APK
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Initialize and Build APK
+        run: |
+          npx @bubblewrap/cli init --manifest=https://fox1pocket.github.io/foxpocket/manifest.json --skip-prompt
+          npx @bubblewrap/cli build --skip-prompt
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: FoxPocket-APK
-          path: ./*.apk
-          
+          path: |
+            *.apk
+            **/*.apk
+            
